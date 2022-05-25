@@ -272,7 +272,7 @@
                 <!--                action="# {reporteBean.printReport(rep)}"-->
                 <div class="col-xs-12 padless" >
                     <p:commandLink id="addP" 
-                                   onclick="PF('dialogReporte').show();"
+                                   action="#{reporteBean.printReport(rep)}"
                                    class="btn btn-primary" 
                                    style="width: 100%;">           
                         <i class="pi pi-print" ></i>

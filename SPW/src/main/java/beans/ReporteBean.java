@@ -184,12 +184,7 @@ public class ReporteBean implements Serializable{
                 }
                 
             }
-            
-            System.out.println("lista de parametros: ");
-            System.out.println("Nombre: "+file.getName());
-            System.out.println("Normales: "+listParametros.size());
-            System.out.println("Fechas: "+listFechaParametros.size());
-            System.out.println();
+
                         
             //definiendo caracteristicas de cada reporte
             switch(file.getName()){
@@ -219,34 +214,26 @@ public class ReporteBean implements Serializable{
             listCustomReporte.add(rep);
         }
         
-        //falta continuar con la generacion dinamica...
     } 
     
 
     public void setParameterValue(CustomReporte reporte, String parametro, String valor){
-           
-            
+                      
             if(listCustomReporte.get(listCustomReporte.indexOf(reporte)).getParametros().containsKey(parametro)){
                 listCustomReporte.get(listCustomReporte.indexOf(reporte)).getParametros().replace(parametro, valor);
             }else {
                 listCustomReporte.get(listCustomReporte.indexOf(reporte)).getParametros().put(parametro, valor);
-            }
-    
-            //comprobacion de congruencia de parametros y valores
-            System.out.println("Reporte:" + reporte.getReporte());
-            System.out.println("Parametros: " + reporte.getListParametros().size());
-            System.out.println("Listas de Valores: " + reporte.getListValores().size());
-            
-            System.out.println(
-                        parametro +" - " + 
-                        valor + " - " + 
-                        listCustomReporte.get(listCustomReporte.indexOf(reporte)).getParametros());
+            }    
 
-            System.out.println("\n");            
+//            System.out.println(
+//                        parametro +" - " + 
+//                        valor + " - " + 
+//                        listCustomReporte.get(listCustomReporte.indexOf(reporte)).getParametros());
+//
+//            System.out.println("\n");            
      
     }
     
-   
     
     
     //Formatea el nombre (del archivo) del reporte que se va a presentar
@@ -258,16 +245,14 @@ public class ReporteBean implements Serializable{
     
     //construye el reporte y retorna el string correspondiente
     public String buildReport(CustomReporte reporte) throws SQLException, JRException {
-        
-        //asignando parametros y valores
-        //settingParameters(reporte);
-
+              
         String reportName = reporte.getReporte().substring(0, reporte.getReporte().length()-7);
         
         System.out.println("datos de reporte: ");
-        System.out.println(reporte.getParametros().values());
-        System.out.println(reporte.getReporte());
-        System.out.println(reporte.getListParametros().size());        
+        System.out.println("Maps: "+reporte.getParametros());
+        System.out.println("Reporte: "+reporte.getReporte());
+        System.out.println("List parametros: "+reporte.getListParametros().size());
+        System.out.println("List fechaParametros: "+reporte.getListFechaParametros().size());         
         
         
 //        try( Connection con = dataSource.getConnection() ) {
