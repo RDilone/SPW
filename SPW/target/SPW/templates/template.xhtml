@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:h="http://java.sun.com/jsf/html"
+                template="/admin.xhtml">
+
+    <ui:define name="head">
+        <title>SPW</title>
+
+        <link rel="shortcut icon" type="image/x-icon" href="#{resource['favicon/favicon.ico']}"/>
+        <link rel="shortcut icon" type="image/x-icon" href="#{resource['favicon/favicon-16x16.png']}" sizes="16x16"/>
+        <link rel="shortcut icon" type="image/x-icon" href="#{resource['favicon/favicon-32x32.png']}" sizes="32x32"/>
+        <link rel="shortcut icon" type="image/x-icon" href="#{resource['favicon/favicon-96x96.png']}" sizes="96x96"/>
+
+        <link rel="manifest" crossorigin="use-credentials" href="manifest.json"/>
+
+        <link href="https://fonts.googleapis.com/css2?family=Varela+Round&amp;display=swap" rel="stylesheet"/>
+        <link href="https://fonts.googleapis.com/css2?family=Sen&amp;display=swap" rel="stylesheet"/>
+
+        <meta name="theme-color" content="#444"/>
+        <meta name="mobile-web-app-capable" content="yes"/>
+
+        <!-- Styles -->
+        <h:outputStylesheet library="css" name="main.css"/>
+        <h:outputStylesheet library="css" name="formulario.css"/>
+        <h:outputStylesheet library="css" name="welcome.css"/>
+        <h:outputStylesheet library="css" name="mobileSize.css"/>
+
+
+        <style >
+            /*color original: #e8eff5*/
+
+            .content-wrapper{
+                background-color: #f6f4d2; 
+            }
+
+            .skin-blue .main-header .navbar {
+                background-color: #8cb369;
+            }
+
+            .skin-blue .sidebar-menu > li.header {
+                font-family: 'Sen', sans-serif;
+            }
+
+            .skin-blue .sidebar-menu>li>a {
+                font-family: 'Sen', sans-serif;
+                font-weight: bold;
+            }
+
+            .skin-blue .sidebar-menu .treeview-menu > li > a {
+                font-family: 'Sen', sans-serif;
+            }
+
+            .main-sidebar {
+                font-family: 'Sen', sans-serif;
+                -moz-box-shadow: 10px 0 10px -3px rgba(0,0,0,0.4);
+                -webkit-box-shadow: 10px 0 10px -3px rgba(0,0,0,0.4);
+                box-shadow: 10px 0 10px -3px rgba(0,0,0,0.4);
+            }
+
+            .skin-blue .main-header .navbar .sidebar-toggle {
+                -moz-box-shadow: 10px 0 10px -5px rgba(0,0,0,0.4);
+                -webkit-box-shadow: 10px 0 10px -5px rgba(0,0,0,0.4);
+                box-shadow: inset 10px 0 10px -5px rgba(0,0,0,0.4);
+            }
+
+            .skin-blue .wrapper, .skin-blue .main-sidebar, .skin-blue .left-side {
+                background-color: #1a1d1f;
+            }
+
+            .skin-blue .sidebar-menu > li.header {
+                background-color: #272b30;
+                color: #ffffff;
+            }
+
+            .content {
+                padding-left: 30px;
+                padding-right: 30px;
+            }
+
+            .main-header .logo {
+                display: none;
+            }
+
+            .skin-blue .main-header .navbar .sidebar-toggle {
+                background-image: url('resources/images/menu2.png');
+                background-repeat: no-repeat;
+                background-size: 20px;
+                background-position-x: 10px;
+                background-position-y: 15px;
+                color: transparent;
+            }
+
+            .skin-blue .main-header .navbar .sidebar-toggle:hover {
+                background-image: url('resources/images/menu2.png');
+                background-repeat: no-repeat;
+                background-size: 20px;
+                background-position-x: 10px;
+                background-position-y: 15px;
+                background-color: rgba(255, 255, 255, 0.1);
+                color: transparent;
+            }
+
+
+            @media (max-width: 767px) {
+
+                .main-sidebar {
+                    box-shadow: none;
+                }
+
+                .content {
+                    padding-left: 10px;
+                    padding-right: 20px;
+                }
+
+                .skin-blue .main-header .navbar .sidebar-toggle {
+                    box-shadow: none;
+                }
+
+                .main-header {
+                    position: fixed;
+                    width: 100%;
+                }
+
+                .main-sidebar {
+                    position: fixed;
+                }
+
+                .content {
+                    padding-top: 50px;
+                }
+            }
+        </style>
+
+
+    </ui:define>
+
+    <ui:define name="logo">
+        AdminFaces
+    </ui:define>   
+
+    <ui:define name="menu">
+        <ui:include src="/includes/menu.xhtml"/>
+    </ui:define>
+
+    <ui:define name="top-menu">
+        <ui:include src="/includes/top-bar.xhtml"/>
+    </ui:define>
+
+    <ui:define name="footer">
+        <ui:include src="/includes/footer.xhtml"/> 
+    </ui:define>
+
+
+</ui:composition>

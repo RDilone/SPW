@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:component xmlns="http://www.w3.org/1999/xhtml"
+              xmlns:ui="http://java.sun.com/jsf/facelets"
+              xmlns:f="http://java.sun.com/jsf/core"
+              xmlns:h="http://java.sun.com/jsf/html"
+              xmlns:p="http://primefaces.org/ui"
+              xmlns:composite="http://xmlns.jcp.org/jsf/composite">
+
+    <composite:interface> 
+        <composite:attribute name="listArchivos" type="java.util.List" />
+        <composite:attribute name="fileSelected" type="entities.Archivo"/>
+        <composite:attribute name="uploadedFile" type="org.primefaces.model.file.UploadedFile"/>
+        <composite:attribute name="downloadFile" type="org.primefaces.model.DefaultStreamedContent" method-signature="void listener()" />
+        <composite:attribute name="deleteFile" method-signature="void listener()" />
+        <composite:attribute name="updateListArchivo" method-signature="void listener()" />        
+        <composite:attribute name="uploadListenerFile" method-signature="void listener(org.primefaces.event.FileUploadEvent)" />
+    </composite:interface>
+
+    <composite:implementation>
+        <!--# {cc.attrs.sak}-->
+
+        <p:dialog header="Adjuntar Archivos" 
+                  widgetVar="archivo" 
+                  modal="true" 
+                  closable="true" 
+                  width="90%" 
+                  style="max-width: 450px;"
+                  resizable="false" >
+            <!--enctype="multipart/form-data"-->
+            <h:form id="agregarArchivo" >   
+                <!--             Area de mensajeria-->
+                <p:messages id="messageFile" 
+                            showDetail="true" 
+                            showSummary="false"
+                            closable="true">
+                    <p:autoUpdate />
+                </p:messages>
+                <div class="row" style="padding: 0px; padding-bottom: 15px;">
+                    <div class="col-md-12">
+                        <!--                     Componente (primefaces) para agregar seleccionar y subir archivos-->
+                        <p:fileUpload style="margin-bottom: 10px;" 
+                                      label="Seleccionar"                                     
+                                      uploadLabel="Subir"
+                                      invalidSizeMessage="El maximo tamaño de archivo permitido es 15 MB"
+                                      id="upFile" 
+                                      value="#{cc.attrs.uploadedFile}"
+                                      process="@this"
+                                      auto="true"
+                                      update="tableFiles"
+                                      listener="#{cc.attrs.uploadListenerFile}"
+                                      cancelLabel="Cancelar" 
+                                      messageTemplate="Tipo de archivo no valido" 
+                                      mode="advanced" 
+                                      allowTypes="/(\.|\/)(jpg|jpeg|png|doc|txt|docx|pdf|xls|xlsx|ppt|pptx|ods|odf|odp)$/" >  
+
+                            <p:growl id="messageUpload" showDetail="true" />
+                        </p:fileUpload>                                   
+                    </div> 
+
+                
+
+                    <div class="col-md-12" >  
+
+                        <p:contextMenu for="tableFiles" id="rmenu">
+
+                            <p:menuitem value="Descargar"
+                                        disabled="#{cc.attrs.fileSelected == null}"
+                                        ajax="false"
+                                        immediate="true"
+                                        icon="pi pi-download">
+                            <p:fileDownload value="#{cc.attrs.downloadFile}" />
+                            </p:menuitem>
+                            
+                            <p:menuitem value="Eliminar"        
+                                        disabled="#{cc.attrs.fileSelected == null}"
+                                        action="#{cc.attrs.deleteFile}" 
+                                        update="@([id$=tableFiles])"
+                                        icon="pi pi-trash">
+                            </p:menuitem>
+
+                        </p:contextMenu>
+
+                        <!--                     Tabla que representa la lista de archivos subidos-->
+
+                                     <!--  -->
+                        <p:dataTable style="margin-bottom: 20px;" 
+                                     id="tableFiles" 
+                                     var="file"              
+                                     rowKey="#{file}"
+                                     selectionMode="single"
+                                     selection="#{cc.attrs.fileSelected}"
+                                     scrollable="true"
+                                     scrollHeight="200"
+                                     paginator="false"
+                                     value="#{cc.attrs.listArchivos}" 
+                                     emptyMessage="No hay archivos adjuntos" >
+
+                            <p:ajax update="@([id$=rmenu])" event="rowSelect" />
+                            
+                            <p:column headerText="Archivos Adjuntos" 
+                                      class="centrado">
+                                <h:outputText value="#{file.nombre}" />         
+                            </p:column>                          
+
+                        </p:dataTable>
+
+
+                    </div>                               
+                </div>
+            </h:form>
+        </p:dialog>
+
+    </composite:implementation>
+
+</ui:component>

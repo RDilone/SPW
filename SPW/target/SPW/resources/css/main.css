@@ -1,0 +1,16 @@
+.main{
+    padding-left: 10px;   
+}
+
+.content-header {
+    position: relative;
+    padding: 0px;
+}
+
+.logo {
+    visibility: hidden !important;
+}
+
+.ui-selectonemenu {
+    display: inline-block !important;
+}

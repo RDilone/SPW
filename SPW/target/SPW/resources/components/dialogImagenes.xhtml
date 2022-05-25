@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:component xmlns="http://www.w3.org/1999/xhtml"
+              xmlns:ui="http://java.sun.com/jsf/facelets"
+              xmlns:f="http://java.sun.com/jsf/core"
+              xmlns:h="http://java.sun.com/jsf/html"
+              xmlns:p="http://primefaces.org/ui"
+              xmlns:adm="http://github.com/adminfaces"
+              xmlns:composite="http://java.sun.com/jsf/composite">
+
+    <composite:interface>
+        <composite:attribute name="imageUpdate" />
+        <composite:attribute name="uploadListener" method-signature="void listener()"/>
+    </composite:interface>
+
+    <composite:implementation>
+        <!--# {cc.attrs.sak}-->
+
+        <p:dialog header="Adjuntar Imagen" 
+                  widgetVar="dialogImagen" 
+                  modal="true" 
+                  closable="true" 
+                  id="dialogImage"
+                  width="250" 
+                  resizable="false" >
+            <!--enctype="multipart/form-data"-->
+            <h:form id="loadImage"  >
+                <p:messages id="message" 
+                            showDetail="true" 
+                            showSummary="false"
+                            closable="true">
+                    <p:autoUpdate />
+                </p:messages>
+                <div class="row">      
+                    
+                    <p:fileUpload label="Seleccionar Cédula"                                       
+                                  uploadLabel="Subir"   
+                                  cancelLabel="Eliminar"
+                                  id="upFile"
+                                  update="#{cc.attrs.imageUpdate}"
+                                  oncomplete="PF('dialogImagen').hide();"
+                                  process="@this"
+                                  auto="true"
+                                  listener="#{cc.attrs.uploadListener}"
+                                  style="margin-bottom: 15px;"                                          
+                                  messageTemplate="Tipo de archivo no valido"                                      
+                                  mode="advanced"
+                                  allowTypes="/(\.|\/)(png|jpg|jpeg)$/" >  
+
+                    </p:fileUpload>              
+
+                </div>
+
+            </h:form>
+        </p:dialog>
+
+    </composite:implementation>
+
+</ui:component>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:component xmlns="http://www.w3.org/1999/xhtml"
+              xmlns:ui="http://java.sun.com/jsf/facelets"
+              xmlns:f="http://java.sun.com/jsf/core"
+              xmlns:h="http://java.sun.com/jsf/html"
+              xmlns:p="http://primefaces.org/ui"
+              xmlns:composite="http://java.sun.com/jsf/composite">
+
+
+
+    <composite:interface>
+
+        <composite:attribute name="generar" method-signature="void listener(entities.CustomReporte)" />
+        <composite:attribute name="reporte" type="entities.CustomReporte" />
+        <composite:attribute name="listValores" type="java.util.List" />
+        <composite:attribute name="listFechaParametros" type="java.util.List" />
+        <composite:attribute name="valorSeleccionado" /> 
+        <composite:attribute name="valorFechaSeleccionado" type="java.util.Date" /> 
+
+    </composite:interface>
+
+    <composite:implementation>
+   
+        <!--# {cc.attrs.sak}-->
+
+        <p:outputPanel style="width: 100%;" >
+
+            <h:form id="genParameters" >
+                <p:repeat value="#{cc.attrs.listValores}" var="rp" varStatus="spr" >
+
+                    <div class="col-xs-12 padless" >
+
+                        <!--converter="omnifaces.SelectItemsIndexConverter"-->
+                        <p:selectOneMenu style="width: 100% !important;"
+                                         value="#{cc.attrs.valorSeleccionado}"  >
+
+                            <p:ajax event="change"
+                                    listener="#{reporteBean.setParameterValue(cc.attrs.reporte, cc.attrs.reporte.listParametros.get(spr.index), cc.attrs.valorSeleccionado)}" />
+
+                            <f:selectItem itemLabel="Seleccionar #{cc.attrs.reporte.listParametros.get(spr.index)}" itemValue="" />
+
+                            <f:selectItems value="#{rp}"
+                                           var="sel"
+                                           itemValue="#{sel}" />
+                        </p:selectOneMenu>
+
+                    </div>
+                </p:repeat>
+
+                <br/>
+
+                <p:repeat value="#{cc.attrs.listFechaParametros}" var="fp" varStatus="fch" >
+                    
+                    <div class="col-xs-12 padless"  >
+                        <p:outputLabel for="@next" value="Fecha #{fch.index + 1}" /><br/>
+                        <p:datePicker id="f_if"
+                                      locale="es"
+                                      value="#{cc.attrs.valorFechaSeleccionado}"
+                                      inputStyleClass="fullSize"
+                                      readonlyInput="true"
+                                      pattern="dd/MM/yyyy"          
+                                      showIcon="true"  >
+                            
+                            <p:ajax event="change" 
+                                    listener="#{reporteBean.setParameterValue(cc.attrs.reporte, fp, reporteBean.sdf.format(cc.attrs.valorFechaSeleccionado))}" />
+                        
+                        </p:datePicker>
+                    </div>
+
+                </p:repeat>     
+
+            </h:form>
+        </p:outputPanel>
+
+    </composite:implementation>
+
+</ui:component>

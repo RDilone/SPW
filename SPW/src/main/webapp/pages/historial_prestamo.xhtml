@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:composite="http://java.sun.com/jsf/composite">
+
+    <link rel="stylesheet" href="resources/assets/css/style.css"/>
+    <link rel="stylesheet" href="resources/css/AdminLTE.min.css"/>
+
+    <!--<h3 style="text-align: center; font-size: 25px; font-family: fantasy;" >Historial de Préstamo</h3>-->
+
+    <style >
+
+        .content-wrapper{
+            background-color: #f6f4d2; 
+        }
+
+        .img-circle {
+            width: 100px !important;
+            border-radius: 5%;
+            margin-right: 15px;           
+        }
+        
+        .widget-user-2 .widget-user-image > img {
+            box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+        }
+
+        .widget-user .widget-user-image {
+            top: 60px;
+            left: 70%;
+        }
+
+        .widget-user .box-footer {
+            padding-top: 70px;
+        }
+
+        .widget-user-username {
+            color: white;
+            letter-spacing: 2px;
+        }
+
+        .widget-user-desc {
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        .box {
+            box-shadow: 0 3px 2px rgb(0 0 0 / 10%);
+        }
+        
+        .bg-yellow {
+            background-color: #2d6a4f !important;
+        }
+       
+    </style>
+
+
+
+
+
+    <h:form id="formHistorialPrestamo" >
+        <div class="col-lg-8 col-lg-offset-2">
+            <div class="box box-widget widget-user-2">
+                <!-- Add the bg color to the header using any of the bg-* classes -->
+                <div class="widget-user-header bg-yellow">
+                    <div class="widget-user-image">
+                        <p:graphicImage class="img-circle" value="#{historialPrestamoBean.downloadImage(historialPrestamoBean.prestamoSeleccionado.idPersona.fotoCedula)}" stream="false" /> 
+                    </div>
+                    <!-- /.widget-user-image -->
+                    <h3 class="widget-user-username">#{historialPrestamoBean.prestamoSeleccionado.idPersona.nombre}</h3>
+                    <h5 class="widget-user-desc">Historial de Préstamo</h5>
+                </div>
+                <div class="box-footer no-padding">
+                    <ul class="nav nav-stacked">
+
+                        <li><a href="#">Cuotas Pagadas <span class="pull-right badge bg-aqua">#{historialPrestamoBean.amortizacionPagada != null ? 
+                                                                                                historialPrestamoBean.amortizacionPagada.cuotaNum : "Ninguna"}</span></a></li>
+                        <li><a href="#">Balance Pendiente <span class="pull-right badge bg-blue">#{historialPrestamoBean.formatMoney(historialPrestamoBean.prestamoSeleccionado.balanceCapital)}</span></a></li>
+                        <li><a href="#">Ganancia Generada <span class="pull-right badge bg-green">#{historialPrestamoBean.formatMoney(historialPrestamoBean.prestamoSeleccionado.ganancia)}</span></a></li>
+                        <li><a href="#">Ultimo Pago <span class="pull-right badge bg-red">#{historialPrestamoBean.amortizacionPagada != null ?
+                                                                                            historialPrestamoBean.formatDate(historialPrestamoBean.amortizacionPagada.fecha) : "Ninguno"}</span></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-lg-12" >
+
+            <section class="cd-timeline js-cd-timeline" style="margin-bottom: 20px;">
+                <div class="container max-width-lg cd-timeline__container">
+
+                    <p:repeat value="#{historialPrestamoBean.listHistorialPrestamo}" var="hist">
+
+                        <div class="cd-timeline__block">
+                            <div class="cd-timeline__img #{historialPrestamoBean.getClassTree(hist.tipoCambio)}">
+                                <p:graphicImage value="#{historialPrestamoBean.getImageTree(hist.tipoCambio)}" stream="false" />                          
+                            </div> <!-- cd-timeline__img -->
+
+                            <div class="cd-timeline__content text-component">
+                                <h2>#{historialPrestamoBean.getTitleTree(hist.tipoCambio)}</h2>
+                                <p class="color-contrast-medium">#{hist.descripcionCambio}</p>
+
+                                <div class="flex justify-between items-center">
+                                    <span class="cd-timeline__date">#{historialPrestamoBean.formatDate(hist.fechaCambio)}</span>
+                                </div>
+                            </div> <!-- cd-timeline__content -->
+                        </div> <!-- cd-timeline__block -->
+
+                    </p:repeat>
+
+                </div>
+            </section>
+
+            <div class="col-lg-2 col-md-3 col-sm-6 col-xs-12 pull-left" >
+                <p:commandLink class="btn btn-danger" 
+                               style="width: 100%;" 
+                               update="principal"
+                               action="#{navigationBean.showPrestamo()}">
+                    <i class="pi pi-arrow-circle-left" style="padding-right: 5px;" ></i>
+                    <b>Atrás</b>
+                </p:commandLink>
+            </div>
+
+        </div>
+
+    </h:form>
+
+    <script src="resources/assets/js/main.js"></script>
+
+</ui:composition>
+
+
+

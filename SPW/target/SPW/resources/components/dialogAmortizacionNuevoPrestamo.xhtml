@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:component xmlns="http://www.w3.org/1999/xhtml"
+              xmlns:ui="http://java.sun.com/jsf/facelets"
+              xmlns:f="http://java.sun.com/jsf/core"
+              xmlns:h="http://java.sun.com/jsf/html"
+              xmlns:p="http://primefaces.org/ui"
+              xmlns:composite="http://xmlns.jcp.org/jsf/composite">
+
+    <composite:interface>
+        <composite:attribute name="listAmortizacion" type="java.util.List" />    
+        <composite:attribute name="createPrestamo" method-signature="void listener()" />  
+        <composite:attribute name="formUpdate"/>   
+    </composite:interface>
+
+    <composite:implementation>
+        <!--# {cc.attrs.sak}-->
+
+
+        <script type="text/javascript">
+
+            PrimeFaces.locales['es'] = {
+                closeText: 'Cerrar',
+                prevText: 'Anterior',
+                nextText: 'Siguiente',
+                monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+                dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+                dayNamesMin: ['D', 'L', 'M', 'X', 'J', 'V', 'S'],
+                weekHeader: 'Semana',
+                firstDay: 1,
+                isRTL: false,
+                showMonthAfterYear: false,
+                yearSuffix: '',
+                timeOnlyTitle: 'Sólo hora',
+                timeText: 'Tiempo',
+                hourText: 'Hora',
+                minuteText: 'Minuto',
+                secondText: 'Segundo',
+                currentText: 'Fecha actual',
+                ampm: false,
+                month: 'Mes',
+                week: 'Semana',
+                day: 'Día',
+                allDayText: 'Todo el día'
+            };
+
+
+        </script>
+
+        <style >
+            .ui-datatable-scrollable-theadclone {
+                visibility: collapse;
+            }
+            
+            .alignItems {
+                vertical-align: top;
+            }
+            
+        </style>
+
+        <p:dialog header="Tabla de Amortización" 
+                  widgetVar="t_amo" 
+                  resizable="false" 
+                  modal="false" 
+                  width="90%" 
+                  position="center" >
+
+
+            <h:form id="formAmortizacion" class="form-horizontal">
+                <div class="box-body">
+
+                    <div class="row">
+                        <div class="col-lg-12" style="padding: 0px; text-align: center;">
+
+                            <p:dataTable var="amo" 
+                                         id="tablaAmortizacion"
+                                         paginator="false"
+                                         scrollable="true"
+                                         scrollHeight="235"
+                                         emptyMessage="No hay registros que mostrar" 
+                                         value="#{cc.attrs.listAmortizacion}"
+                                         reflow="true">
+
+                                <p:column headerText="Número de Cuota" >
+                                    <h:outputText value="#{amo.cuotaNum}" />
+                                </p:column>
+
+                                <p:column headerText="Pago Capital" >
+                                    <h:outputText value="#{amo.pagoCapital}" >
+                                        <f:convertNumber pattern="###,###,###,###.##" locale="es_DO"/>
+                                    </h:outputText>
+                                </p:column>
+
+                                <p:column headerText="Pago Interés" >
+                                    <h:outputText value="#{amo.pagoInteres}" >
+                                        <f:convertNumber pattern="###,###,###,###.##" locale="es_DO"/>
+                                    </h:outputText>
+                                </p:column>
+
+                                <p:column headerText="Cuota" >
+                                    <h:outputText value="#{amo.cuota}" >
+                                        <f:convertNumber pattern="###,###,###,###.##" locale="es_DO"/>
+                                    </h:outputText>
+                                </p:column>
+
+                                <p:column headerText="Saldo" >
+                                    <h:outputText value="#{amo.saldo}" >
+                                        <f:convertNumber pattern="###,###,###,###.##" locale="es_DO"/>
+                                    </h:outputText>
+                                </p:column>
+
+                                <p:column headerText="Fecha de pago" >
+                                    <h:outputText value="#{amo.fecha}" >
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    </h:outputText>
+                                </p:column>
+
+                                <p:columnGroup type="footer" >
+                                    <p:row style="font-size: 12px;">
+                                        <!-- Area de totales:
+                                                - se calculan cada vez que se agregan o se eliminan filas
+                                        -->
+                                        <p:column colspan="5" 
+                                                  style="text-align: right; font-weight: bold;" 
+                                                  footerText="Total RD$." />
+
+
+                                        <p:column footerText="#{nuevoPrestamoBean.formatDouble(nuevoPrestamoBean.totalPagoCapital)}" 
+                                                  style="font-weight: bold;"/>
+
+                                        <p:column footerText="#{nuevoPrestamoBean.formatDouble(nuevoPrestamoBean.totalPagoInteres)}" 
+                                                  style="font-weight: bold;"/>
+
+                                        <p:column footerText="#{nuevoPrestamoBean.formatDouble(nuevoPrestamoBean.totalCuota)}" 
+                                                  style="font-weight: bold;"/>
+
+                                        <p:column footerText="#{nuevoPrestamoBean.formatDouble(nuevoPrestamoBean.totalSaldo)}" 
+                                                  style="font-weight: bold;"/>
+                                        
+                                        <p:column footerText="" />
+                                         
+                                    </p:row>
+                                </p:columnGroup>
+
+                            </p:dataTable>
+
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+                <div class="row" style="padding-right: 5px;">
+
+
+                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 pull-left" >
+                        <h:panelGrid style="margin-left: 20px;" columns="4" cellspacing="5" columnClasses="alignItems, alignItems, alignItems, alignItems">
+                            <p:outputLabel value="Enviar por correo" style="margin-right: 5px;"/>
+                            <p:toggleSwitch value="#{nuevoPrestamoBean.enviarCorreo}" style="margin-right: 20px;" />
+
+                            <p:outputLabel  value="Imprimir PDF" style="margin-right: 5px;"/>
+                            <p:toggleSwitch value="#{nuevoPrestamoBean.imprimirPdf}" />
+                        </h:panelGrid>
+                    </div>
+
+
+                    <div class="col-lg-2 col-md-3 col-sm-6 col-xs-12 pull-right" >
+                        <p:commandLink class="btn btn-success" 
+                                       style="width: 100%;" 
+                                       onclick="PF('t_amo').hide();"
+                                       update="#{cc.attrs.formUpdate}"
+                                       actionListener="#{cc.attrs.createPrestamo}" >
+                            <i class="pi pi-cloud-upload" style="padding-right: 5px;" ></i>
+                            <b>Crear Préstamo</b>
+                        </p:commandLink>
+                    </div>
+
+                    <div class="col-lg-2 col-md-3 col-sm-6 col-xs-12 pull-right" >
+                        <p:commandLink class="btn btn-danger" 
+                                       style="width: 100%; margin-bottom: 15px;" 
+                                       onclick="PF('t_amo').hide();">
+                            <i class="pi pi-arrow-circle-left" style="padding-right: 5px;" ></i>
+                            <b>Atrás</b>
+                        </p:commandLink>
+                    </div>
+                </div>
+            </h:form>
+        </p:dialog>     
+
+
+    </composite:implementation>
+
+</ui:component>

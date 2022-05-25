@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:component xmlns="http://www.w3.org/1999/xhtml"
+              xmlns:ui="http://java.sun.com/jsf/facelets"
+              xmlns:f="http://java.sun.com/jsf/core"
+              xmlns:h="http://java.sun.com/jsf/html"
+              xmlns:p="http://primefaces.org/ui"
+              xmlns:composite="http://java.sun.com/jsf/composite">
+
+    <composite:interface>
+        <composite:attribute name="intervalo" />
+        <composite:attribute name="plural" />
+         <composite:attribute name="cantDias" />
+    </composite:interface>
+
+    <composite:implementation>
+        <!--# {cc.attrs.sak}-->
+
+        <p:dialog header="Agregar / Editar Intervalo" 
+                  widgetVar="dialogIntervalo" 
+                  modal="true" 
+                  closable="true" 
+                  id="dialogInterval"
+                  style="max-width: 350px;"
+                  width="90%" 
+                  resizable="false" >
+            <!--enctype="multipart/form-data"-->
+            <h:form id="editIntervalo" >
+                <p:messages id="message" 
+                            showDetail="true" 
+                            showSummary="false"
+                            closable="true">
+                    <p:autoUpdate />
+                </p:messages>
+                <div class="row">                       
+
+                    <div class="col-lg-12">
+                        <p:outputLabel for="@next" value="Intervalo: "/><br/>
+                        <p:inputText value="#{cc.attrs.intervalo}" 
+                                     id="interv" 
+                                     required="true"
+                                     requiredMessage="Intervalo: debe tener al menos 4 caracteres"
+                                     style="width: 100%; 
+                                     margin-bottom: 15px;" 
+                                     placeholder="Intervalo"/>          
+                    </div>
+
+                    <div class="col-lg-12">
+                        <p:outputLabel for="@next" value="Plural: " /><br/>
+                        <p:inputText value="#{cc.attrs.plural}" 
+                                     id="plu" 
+                                     required="true"
+                                     requiredMessage="Plural: debe tener al menos 4 caracteres"
+                                     class="pull-left margen" 
+                                     style="width: 100%; 
+                                     margin-bottom: 15px;" 
+                                     placeholder="Plural"/>
+                    </div>
+                    <div class="col-lg-12">
+                        <p:outputLabel for="@next" value="Cant. Dias: " /><br/>
+                        <p:inputText value="#{cc.attrs.cantDias}" 
+                                     id="cant" 
+                                     required="true"
+                                     requiredMessage="Cant. Dias: debe ser mayor que 0"
+                                     class="pull-left" 
+                                     style="width: 100%; 
+                                     margin-bottom: 40px;" 
+                                     placeholder="Cantidad días"/>
+                    </div>                  
+                    
+
+                    <div class="col-lg-12">
+                        <p:commandLink id="add" 
+                                       class="btn btn-primary" 
+                                       actionListener="#{intervaloBean.newEditIntervalo()}" 
+                                       title="Guardar" style="width: 100%;" 
+                                       update=":formIntervalo:tablaIntervalos" >
+                            <i class="pi pi-save" style="margin-right: 5px;" ></i>
+                            <b>Guardar</b>
+                        </p:commandLink>
+                    </div>
+
+                </div>
+
+            </h:form>
+        </p:dialog>
+
+    </composite:implementation>
+
+</ui:component>

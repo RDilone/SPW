@@ -1,0 +1,11 @@
+
+@media (max-width: 400px){
+    .fullSize {
+        width: 100% !important;
+    }
+    
+    .marginComponent {
+        margin-bottom: 15px !important;
+    }
+}
+

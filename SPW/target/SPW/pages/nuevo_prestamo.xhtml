@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:components="http://xmlns.jcp.org/jsf/composite/components">
+
+
+    <style >
+
+        .newForm {
+            font-family: 'Varela Round', sans-serif;
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+            padding: 20px;
+            width: 100%;
+            border-radius: 10px;   
+            background-color: white;
+            box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 1px 0px, 
+                rgba(60, 64, 67, 0.15) 1.5px 1.5px 3px 1px;
+        }
+
+        .titulo2 {
+            font-family: 'Varela Round', sans-serif;
+            font-weight: bold;
+            font-size: 1.5em;
+            margin: 0px
+        }
+
+        .botones {
+            height: 35px; 
+            width: 45%;
+            margin-bottom: 0px;
+        }
+
+        .datepicker {
+            width: 100% !important;
+        }
+
+        @media (max-width: 991px) {
+            .margen {
+                margin-bottom: 15px;
+            }
+
+            .nota {
+                margin-bottom: 20px !Important;
+            }
+        }
+
+        @media(max-width: 800px) {
+            .botones {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .margen2 {
+                margin-bottom: 15px;
+            }
+        }
+
+        @media (min-width: 991px) {
+            .paddeng {
+                padding-right: 15px !Important;
+            }
+        }
+
+        @media (min-width: 766px) {
+            .paddeng2 {
+                padding-right: 15px !Important;
+            }
+        }
+
+        .ui-tabs .ui-tabs-panel {
+            border: 1px solid #BBB;
+            border-radius: 3px 3px 10px 10px;
+        }
+
+    </style>
+
+    <h:form id="formNuevoPrestamo" >
+
+        <div class="col-xs-12 col-lg-10" >
+            <div class="row" >
+                <div class="newForm" >
+                    
+                    <div class="col-xs-12 col-sm-6" >                   
+                        <p class="titulo2" >
+                            <img height="50" 
+                                 style="margin-right: 10px; 
+                                        margin-bottom: 10px;" 
+                                 src="resources/images/insurance.png" /> 
+                            Nuevo Préstamo
+                        </p>
+                    </div>  
+
+                    <div class="col-xs-12" >
+                        <div class="row" >
+                            <hr style="margin-top: 10px; border-top: #eaeaea 1px solid;"/>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-12" style="margin-bottom: 10px;" >
+                        <div class="row" >
+                            <div class="row" style="margin-bottom: 15px;" >
+                                <div class="col-lg-4 col-md-4">
+                                    <p:outputLabel for="@next" 
+                                                   style="text-shadow: rgba(255,255,255,255) 0px 1px 2px;" 
+                                                   value="Monto a prestar"/><br/>
+                                    <p:inputNumber value="#{nuevoPrestamoBean.monto}"
+                                                   id="montoC"
+                                                   minValue="0"
+                                                   symbol="RD$. "
+                                                   class="pull-left margen" 
+                                                   onfocus="this.select();"
+                                                   inputStyleClass="datepicker"
+                                                   style="width: 100%;" 
+                                                   title="Monto a prestar RD$." 
+                                                   placeholder="Monto a prestar RD$."/>
+                                </div>
+                                <div class="col-lg-4 col-md-4">
+                                    <p:outputLabel for="@next" value="Periodo"/><br/>
+                                    <p:selectOneMenu class="margen" 
+                                                     required="true"
+                                                     style="width: 100%;" 
+                                                     title="Periodo (Para el cálculo)"
+                                                     value="#{nuevoPrestamoBean.periodoSeleccionado}"
+                                                     converter="omnifaces.SelectItemsIndexConverter" >
+
+                                        <f:selectItem itemLabel="Seleccionar Periodo" />
+
+                                        <f:selectItems value="#{nuevoPrestamoBean.listIntervalo}" 
+                                                       var="sel" 
+                                                       itemLabel="#{sel.intervalo}" 
+                                                       itemValue="#{sel}" />
+                                        <p:ajax event="change" update="plaz" />
+
+                                    </p:selectOneMenu>
+                                </div>
+                                <div class="col-lg-4 col-md-4">
+                                    <p:outputLabel for="@next" value="Plazo del prestamo"/><br/>
+                                    <p:inputNumber value="#{nuevoPrestamoBean.plazo}"
+                                                   id="plaz"
+                                                   symbol=" (#{nuevoPrestamoBean.periodoSeleccionado.plural})"
+                                                   symbolPosition="s"
+                                                   inputStyleClass="datepicker"
+                                                   onfocus="this.select();"
+                                                   title="Plazo (Cantidad de Periodos)" 
+                                                   placeholder="Plazo"/>
+                                </div>
+
+                            </div>
+
+                            <div class="row" style="margin-bottom: 15px;">
+
+                                <div class="col-lg-4 col-md-4">
+                                    <p:outputLabel for="@next" value="Tasa de interés"/><br/>
+                                    <p:inputNumber value="#{nuevoPrestamoBean.tasa}" 
+                                                   class="pull-left margen"
+                                                   symbol=" %"
+                                                   symbolPosition="s"
+                                                   style="width: 100%;" 
+                                                   inputStyleClass="datepicker"
+                                                   title="Tasa de interés % (Según el Plazo)" 
+                                                   onfocus="this.select();"
+                                                   placeholder="Tasa de interés %"/>
+                                </div>
+                                <div class="col-lg-4 col-md-4">
+                                    <p:outputLabel for="@next" value="Intervalo de pago"/><br/>
+                                    <p:selectOneMenu class="margen" 
+                                                     style="width: 100%;" 
+                                                     title="Cada cuantos días se va a realizar el pago" 
+                                                     value="#{nuevoPrestamoBean.intervaloPagoSeleccionado}"
+                                                     converter="omnifaces.SelectItemsIndexConverter" >
+
+                                        <f:selectItem itemLabel="Seleccionar Intervalo de Pago" />
+
+                                        <f:selectItems value="#{nuevoPrestamoBean.listIntervalo}" 
+                                                       var="sel" 
+                                                       itemLabel="#{sel.intervalo}" 
+                                                       itemValue="#{sel}" />
+                                    </p:selectOneMenu>
+                                </div>
+                                <div class="col-lg-4 col-md-4">
+                                    <p:outputLabel for="@next" value="Tipo de interés"/><br/>
+                                    <p:selectOneMenu style="width: 100%;" 
+                                                     id="tip_i"
+                                                     title="#{nuevoPrestamoBean.tipoInteresMessage}"
+                                                     value="#{nuevoPrestamoBean.tipoInteresSeleccionado}"
+                                                     converter="omnifaces.SelectItemsIndexConverter" >
+
+                                        <f:selectItem itemLabel="Seleccionar Tipo de Interés" />
+
+                                        <f:selectItems value="#{nuevoPrestamoBean.listTipoInteres}" 
+                                                       var="sel" 
+                                                       itemLabel="#{sel}" 
+                                                       itemValue="#{sel}" />
+
+                                        <p:ajax event="change" update="tip_i" />
+
+                                    </p:selectOneMenu>
+                                </div>
+
+                            </div>
+
+                            <div class="row" style="margin-bottom: 15px;">
+                                <div class="col-lg-4 col-md-4" >
+
+                                    <p:outputLabel for="@next" value="Porcentaje Mora"/><br/>
+                                    <p:inputNumber id="p_mora" 
+                                                   class="margen" 
+                                                   symbol=" %"
+                                                   symbolPosition="s"
+                                                   inputStyleClass="datepicker"
+                                                   onfocus="this.select();"
+                                                   value="#{nuevoPrestamoBean.mora}" 
+                                                   title="% en base a la cuota"
+                                                   placeholder="% Mora" />
+
+                                </div> 
+
+                                <div class="col-lg-4 col-md-4" >
+
+                                    <p:outputLabel for="@next" value="Persona"/><br/>
+                                    <p:selectOneMenu style="float: right; width: 100%;" 
+                                                     id="selectPersona"
+                                                     filter="true"
+                                                     class="margen" 
+                                                     filterMatchMode="contains"
+                                                     converter="omnifaces.SelectItemsIndexConverter" 
+                                                     title="Seleccionar persona"                                                
+                                                     value="#{nuevoPrestamoBean.personaSeleccionada}" >
+
+                                        <f:selectItem itemLabel="Seleccionar Persona"  />
+
+                                        <p:ajax event="change" 
+                                                listener="#{nuevoPrestamoBean.openNewPersonaDialog()}" 
+                                                update="@([id$=editPersona])" />
+
+                                        <f:selectItems value="#{nuevoPrestamoBean.listPersona}" 
+                                                       var="sel" 
+                                                       itemLabel="#{sel.nombre}" 
+                                                       itemValue="#{sel}" />
+                                    </p:selectOneMenu>
+
+                                </div>
+
+                                <div class="col-lg-4 col-md-4" >
+                                    <p:outputLabel for="@next" value="Fecha inicio de pago" /><br/>
+                                    <p:datePicker id="f_pago"
+                                                  locale="es"
+                                                  class="margen" 
+                                                  inputStyleClass="datepicker"
+                                                  readonlyInput="true"
+                                                  pattern="dd/MM/yyyy"                                         
+                                                  value="#{nuevoPrestamoBean.fechaPago}" 
+                                                  showIcon="true"  />
+                                </div>
+
+                            </div>
+
+                            <div class="row" style="margin-bottom: 30px;">
+
+                                <div class="col-lg-6 col-md-6">
+
+                                    <p:outputLabel for="@next" value="Concepto"/><br/>
+                                    <p:inputText value="#{nuevoPrestamoBean.concepto}" 
+                                                 class="pull-left margen" style="width: 100%;" 
+                                                 title="Concepto" 
+                                                 placeholder="Concepto (Opcional)"/>
+
+
+
+                                </div>
+
+                                <div class="col-lg-6 col-md-6">
+
+                                    <p:outputLabel for="@next" value="Garantía"/><br/>
+                                    <p:inputText id="d_gar" 
+                                                 class="margen" 
+                                                 value="#{nuevoPrestamoBean.garantia}" 
+                                                 placeholder="Descripción de Garantía (Opcional)" 
+                                                 style="width: 100%;"/>
+
+                                </div>
+                            </div>
+
+
+
+                            <div class="row" >
+                                <div class="col-lg-12" style="padding: 0px;">
+
+                                    <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 pull-right" >
+
+                                        <p:commandLink class="btn btn-danger pull-left botones" 
+                                                       immediate="true" 
+                                                       onclick="PF('archivo').show();" 
+                                                       update="@([id$=agregarArchivo])"> 
+                                            <i class="pi pi-file-pdf" style="margin-right: 5px;"></i>   
+                                            <span><b>Agregar Archivos</b></span>
+                                        </p:commandLink>
+
+                                        <p:commandLink class="btn btn-primary pull-right botones" 
+                                                       actionListener="#{nuevoPrestamoBean.generateAmortizacion()}"
+                                                       update="formNuevoPrestamo @([id$=tablaAmortizacion])"> 
+                                            <i class="pi pi-arrow-circle-right" style="margin-right: 5px;"></i>   
+                                            <span><b>Continuar</b></span>
+                                        </p:commandLink>
+
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>        
+
+                </div>   
+            </div>
+        </div>
+
+    </h:form>
+
+
+
+    <components:dialogAmortizacionNuevoPrestamo listAmortizacion="#{nuevoPrestamoBean.listAmortizacion}"
+                                                createPrestamo="#{nuevoPrestamoBean.newPrestamo()}"
+                                                formUpdate="formNuevoPrestamo @([id$=formMisPrestamos])" />
+
+    <components:dialogArchivos listArchivos="#{nuevoPrestamoBean.listArchivo}"
+                               fileSelected="#{nuevoPrestamoBean.archivoSeleccionado}"
+                               uploadListenerFile="#{nuevoPrestamoBean.uploadFile}"
+                               uploadedFile="#{nuevoPrestamoBean.uploadedFile}"
+                               deleteFile="#{nuevoPrestamoBean.deleteFile()}"
+                               downloadFile="#{nuevoPrestamoBean.downloadSelectedFile()}"/>
+
+    <components:dialogPersonas nombre="#{nuevoPrestamoBean.nombre}"
+                               cedula="#{nuevoPrestamoBean.cedula}"
+                               direccion="#{nuevoPrestamoBean.direccion}"
+                               celular="#{nuevoPrestamoBean.celular}"
+                               telefono="#{nuevoPrestamoBean.telefono}"
+                               correo="#{nuevoPrestamoBean.correo}"
+                               numTarjeta="#{nuevoPrestamoBean.numTarjeta}"
+                               pinTarjeta="#{nuevoPrestamoBean.pin}"
+                               guardar="#{nuevoPrestamoBean.newPersona()}"
+                               streamedContent="#{nuevoPrestamoBean.loadImage}"
+                               uploadListener="#{nuevoPrestamoBean.uploadImage}"
+                               elementUpdate="formNuevoPrestamo:selectPersona"/>
+
+</ui:composition>
+
+

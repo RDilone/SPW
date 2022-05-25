@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui">
+
+    <style>
+        .newForm {
+            font-family: 'Varela Round', sans-serif;
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            padding: 20px;
+            width: 100%;
+            border-radius: 10px;   
+            background-color: white;
+            box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 1px 0px, 
+                rgba(60, 64, 67, 0.15) 1.5px 1.5px 3px 1px;
+        }
+
+        .padless {
+            padding: 0px;
+        }
+
+        .titulo2 {
+            font-family: 'Varela Round', sans-serif;
+            font-weight: bold;
+            font-size: 1.5em;
+            margin: 0px;
+        }
+
+    </style>
+
+
+    <h:form id="editContrasena" >
+        <div class="col-xs-12 col-sm-6 col-md-4"  >
+            <div class="row" >
+                <div class="newForm" >
+                    <div class="col-xs-12" >                   
+                        <p class="titulo2" >
+                            <img height="50" style="margin-right: 10px;" src="resources/images/lock.png" /> 
+                            Cambiar Contraseña
+                        </p>
+                    </div>  
+
+                    <div class="col-xs-12" >
+                        <div class="row" >
+                            <hr style="margin-top: 10px; border-top: #eaeaea 1px solid;"/>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-12 padless" >
+                        <div class="row" >
+                            <div class="col-xs-12">
+                                <p:outputLabel for="@next" value="Contraseña actual: "/><br/>
+                                <p:password  value="#{navigationBean.currentPass}" 
+                                             id="cPass" 
+                                             toggleMask="true"
+                                             style="width: 100%; 
+                                             margin-bottom: 15px;" 
+                                             placeholder="Contraseña actual"/>
+                            </div>
+
+                            <div class="col-xs-12">
+                                <p:outputLabel for="@next" value="Nueva Contraseña " /><br/>
+                                <p:password  value="#{navigationBean.newPass}" 
+                                             id="nPass" 
+                                             class="pull-left" 
+                                             style="width: 100%; 
+                                             margin-bottom: 15px;" 
+                                             placeholder="Nueva Contraseña"/>
+                            </div>
+                            <div class="col-xs-12">
+                                <p:outputLabel for="@next" value="Confirmar Contraseña" /><br/>
+                                <p:password  value="#{navigationBean.confirmPass}" 
+                                             id="cfPass" 
+                                             class="pull-left" 
+                                             style="width: 100%; 
+                                             margin-bottom: 40px;" 
+                                             placeholder="Confirmar Contraseña"/>
+                            </div>                  
+
+
+                            <div class="col-xs-12">
+                                <p:commandLink id="add" 
+                                               class="btn btn-primary" 
+                                               actionListener="#{navigationBean.changeUserPassword()}" 
+                                               title="Guardar" style="width: 100%;" >
+                                    <i class="pi pi-save" style="margin-right: 5px;" ></i>
+                                    <b>Guardar</b>
+                                </p:commandLink>
+                            </div>
+                        </div>
+                    </div>
+                </div>   
+            </div>
+        </div>
+    </h:form>
+
+
+</ui:composition>
+
+
+

@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:components="http://xmlns.jcp.org/jsf/composite/components">
+
+    <style>
+
+        .loginButton {
+            cursor: pointer; 
+            color: #fff; 
+            font-weight: bold; 
+            font-size: 16px; 
+            width: 100%;
+            text-decoration: none; 
+            background-color: #ff7b00; 
+            border: none; 
+            border-radius: 4px; 
+            margin: 0px; 
+            padding: 7px 12px;
+        }
+
+
+        .newForm {
+            font-family: 'Varela Round', sans-serif;
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+            padding: 20px;
+            width: 100%;
+            border-radius: 10px;   
+            background-color: white;
+            box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 1px 0px, 
+                rgba(60, 64, 67, 0.15) 1.5px 1.5px 3px 1px;
+        }
+
+        .titulo2 {
+            font-family: 'Varela Round', sans-serif;
+            font-weight: bold;
+            font-size: 1.5em;
+            margin: 0px
+        }
+
+
+    </style>
+
+
+    <h:form id="formPersonas" class="form-horizontal">
+
+        <div class="col-xs-12" >
+            <div class="row" >
+                <div class="newForm" >
+
+                    <div class="col-xs-12 col-sm-6" >                   
+                        <p class="titulo2" >
+                            <img height="50" 
+                                 style="margin-right: 10px; 
+                                        margin-bottom: 10px;" 
+                                 src="resources/images/b2c.png" /> 
+                            Administración de Personas
+                        </p>
+                    </div>   
+
+                    <div class="col-xs-12 col-sm-6">
+                        <p:outputLabel style="margin-top: 10px; text-shadow: rgba(255,255,255,255) 0px 2px 4px;" 
+                                       value="Menú de Opciones: Click derecho en una fila de la tabla" />
+                    </div>
+
+                    <div class="col-xs-12" >
+                        <div class="row" >
+                            <hr style="margin-top: 10px; border-top: #eaeaea 1px solid;"/>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-12" style="margin-bottom: 10px;" >
+                        <div class="row" >
+                            <p:dataTable var="per" 
+                                         id="tablaPersonas"
+                                         emptyMessage="No hay registros que mostrar" 
+                                         value="#{personaBean.listPersona}"
+                                         selection="#{personaBean.personaSeleccionada}"
+                                         selectionMode="single"
+                                         rowKey="#{per.idPersona}"
+                                         style="margin-top: 15px;" >
+
+                                <p:ajax update="@([id$=rmenu])" event="rowSelect" />
+
+                                <p:column headerText="ID Persona" 
+                                          visible="#{personaBean.col_id_persona}"
+                                          responsivePriority="3"
+                                          width="80">
+                                    <h:outputText value="#{per.idPersona}" />
+                                </p:column>
+
+                                <p:column headerText="Cédula (Buscar)" 
+                                          visible="#{personaBean.col_cedula}" 
+                                          filterBy="#{per.cedula}" 
+                                          responsivePriority="2"
+                                          filterMatchMode="contains" width="100">
+                                    <h:outputText value="#{per.cedula}" />
+                                </p:column>
+
+                                <p:column headerText="Foto Cédula" 
+                                          visible="#{personaBean.col_foto_cedula}"
+                                          responsivePriority="5"
+                                          width="100">
+                                    <p:graphicImage id="imgCedula"
+                                                    style="border-radius: 5px;"
+                                                    value="#{personaBean.downloadFile(per.fotoCedula)}" 
+                                                    stream="false"
+                                                    width="100%"/>
+                                </p:column>
+
+                                <p:column headerText="Nombre (Buscar)" 
+                                          visible="#{personaBean.col_nombre}" 
+                                          filterBy="#{per.nombre}" 
+                                          filterMatchMode="contains" 
+                                          width="150">
+                                    <h:outputText value="#{per.nombre}" />
+                                </p:column>
+
+                                <p:column headerText="Teléfono" 
+                                          visible="#{personaBean.col_telefono}" 
+                                          responsivePriority="5"
+                                          width="100">
+                                    <h:outputText value="#{per.telefono}" />
+                                </p:column>
+
+                                <p:column headerText="Celular" 
+                                          visible="#{personaBean.col_celular}" 
+                                          width="100">
+                                    <h:outputText value="#{per.celular}" />
+                                </p:column>
+
+                                <p:column headerText="Dirección" 
+                                          visible="#{personaBean.col_direccion}" 
+                                          responsivePriority="6"
+                                          width="100">
+                                    <h:outputText value="#{per.direccion}" />
+                                </p:column>
+
+                                <p:column headerText="Número Tarjeta" 
+                                          visible="#{personaBean.col_num_tarjeta}" 
+                                          responsivePriority="4"
+                                          width="100">
+                                    <h:outputText value="#{per.numTarjeta}" />
+                                </p:column>
+
+                                <p:column headerText="Pin Tarjeta" 
+                                          visible="#{personaBean.col_pin_tarjeta}" 
+                                          responsivePriority="4"
+                                          width="80">
+                                    <h:outputText value="#{per.pinTarjeta}" />
+                                </p:column>
+
+                                <p:column headerText="Correo" 
+                                          visible="#{personaBean.col_correo}" 
+                                          responsivePriority="6"
+                                          width="100">
+                                    <h:outputText value="#{per.correo}" />
+                                </p:column>
+
+                                <f:facet name="footer">Cantidad de registros: [ #{personaBean.listPersona.size()} ]</f:facet>
+                            </p:dataTable>
+                        </div>
+                    </div>        
+
+                </div>   
+            </div>
+        </div>
+
+
+
+        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+            <p:commandButton value="SI" 
+                             type="button" 
+                             styleClass="ui-confirmdialog-yes" 
+                             icon="pi pi-check" />
+            <p:commandButton value="NO" 
+                             type="button"
+                             styleClass="ui-confirmdialog-no" 
+                             icon="pi pi-times" />
+        </p:confirmDialog>
+
+        <p:contextMenu for="tablaPersonas" id="rmenu">
+
+            <p:menuitem value="Nueva Persona"                  
+                        update="@([id$=editPersona])"                                  
+                        onclick="PF('dialogPersona').show();"
+                        actionListener="#{personaBean.cleanFields()}" 
+                        action="#{personaBean.setNewEdit(true)}" 
+                        icon="pi pi-plus-circle"/>
+
+            <p:menuitem value="Editar"                                     
+                        onclick="PF('dialogPersona').show();" 
+                        disabled="#{!personaBean.rowSelected}"
+                        update="@([id$=editPersona])" 
+                        actionListener="#{personaBean.editPersona()}" 
+                        action="#{personaBean.setNewEdit(false)}" 
+                        icon="pi pi-pencil"/>
+
+            <p:menuitem value="Borrar"        
+                        disabled="#{!personaBean.rowSelected}"
+                        actionListener="#{personaBean.removePersona()}" 
+                        update="tablaPersonas" 
+                        icon="pi pi-trash">
+                <p:confirm header="Confirmación" 
+                           message="Está seguro que desea eliminar esta Persona?" 
+                           icon="pi pi-info-circle" />
+            </p:menuitem>
+
+            <p:menuitem value="Columnas"                  
+                        update="@([id$=editColumna])"                                  
+                        onclick="PF('dialogColumnas').show();"
+                        actionListener="#{personaBean.fillCheckListColumnas()}"
+                        icon="pi pi-table"/>
+        </p:contextMenu>
+
+    </h:form>
+
+
+    <components:dialogPersonas nombre="#{personaBean.nombre}"
+                               direccion="#{personaBean.direccion}"
+                               correo="#{personaBean.correo}"
+                               cedula="#{personaBean.cedula}"
+                               streamedContent="#{personaBean.loadImage}"
+                               celular="#{personaBean.celular}"
+                               numTarjeta="#{personaBean.numTarjeta}"
+                               pinTarjeta="#{personaBean.pin}"
+                               telefono="#{personaBean.telefono}"
+                               uploadListener="#{personaBean.uploadFile}"
+                               elementUpdate="formPersonas:tablaPersonas"
+                               guardar="#{personaBean.newEditPersona()}"/>
+
+    <components:dialogColumnas listColumna="#{personaBean.listColumna}"
+                               listCheckColumna="#{personaBean.listCheckColumna}"
+                               save="#{personaBean.updateCheckListColumna()}"
+                               updateElement="formPersonas:tablaPersonas"/>
+
+</ui:composition>
+
+

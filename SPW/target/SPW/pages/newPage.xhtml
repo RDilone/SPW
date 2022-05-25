@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui">
+
+
+
+    <!--Ejemplo de formulario en blanco-->
+
+    <div class="box box-warning">
+        <div class="box-header with-border">
+            <h3 class="box-title">Formulario en blanco</h3>
+        </div>
+        <h:form id="formEmpty" class="form-horizontal">
+            <div class="box-body">
+                <div class="form-group">
+
+                </div>
+
+                <div class="form-group">
+
+                </div>
+            </div>
+
+            <div class="box-footer">
+
+            </div>
+        </h:form>
+
+    </div>
+
+
+    <!--Ejemplo de dialog en blanco-->
+
+    <p:dialog header="Dialog en blanco" widgetVar="jdl" resizable="false" modal="false" width="350">
+
+
+        <h:form id="dialogEmpty" class="form-horizontal">
+            <div class="box-body">
+                <div class="form-group">
+
+                </div>
+
+                <div class="form-group">
+
+                </div>
+            </div>
+
+            <div class="box-footer">
+                <p:commandLink class="btn btn-primary pull-right" onclick="PF('jdl').hide();" >           
+                    <b>Guardar</b>
+                </p:commandLink>
+            </div>
+        </h:form>
+    </p:dialog> 
+
+
+
+    <!--Ejemplo de dataTable-->
+
+    <p:dataTable var="variable" value="">
+        <p:column headerText="Id">
+            <h:outputText value="---" />
+        </p:column>
+
+        <p:column headerText="Year">
+            <h:outputText value="---" />
+        </p:column>
+
+        <p:column headerText="Brand">
+            <h:outputText value="---" />
+        </p:column>
+
+    </p:dataTable>
+
+</ui:composition>
+
+
+

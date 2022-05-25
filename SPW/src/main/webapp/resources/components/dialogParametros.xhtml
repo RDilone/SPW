@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:component xmlns="http://www.w3.org/1999/xhtml"
+              xmlns:ui="http://java.sun.com/jsf/facelets"
+              xmlns:f="http://java.sun.com/jsf/core"
+              xmlns:h="http://java.sun.com/jsf/html"
+              xmlns:p="http://primefaces.org/ui"
+              xmlns:composite="http://java.sun.com/jsf/composite">
+
+    <composite:interface>
+        <composite:attribute name="nombreParametro" />   
+        <composite:attribute name="updateElement" />   
+        <composite:attribute name="addParameter" method-signature="void listener()" />
+    </composite:interface>
+
+    <composite:implementation>
+        <!--# {cc.attrs.sak}-->
+
+        <p:dialog header="Nuevo Parametro" 
+                  widgetVar="dialogAddParameter" 
+                  modal="true" 
+                  closable="true" 
+                  id="dialogParam"
+                  style="max-width: 380px;"
+                  width="90%" 
+                  resizable="false" >
+            <!--enctype="multipart/form-data"-->
+            <h:form id="addParameter" >
+                <div class="row">                       
+
+                    <div class="col-xs-8">
+                        <p:inputText value="#{cc.attrs.nombreParametro}" 
+                                     id="interv" 
+                                     required="true"
+                                     style="width: 100%; 
+                                     margin-bottom: 15px;" 
+                                     placeholder="Nombre del Parametro"/>          
+                    </div>
+                
+                   <div class="col-xs-4">
+                        <p:commandLink id="add" 
+                                       class="btn btn-primary" 
+                                       actionListener="#{cc.attrs.addParameter}"
+                                       update="#{cc.attrs.updateElement}"
+                                       onclick="PF('dialogAddParameter').hide();"
+                                       style="width: 100%;"  >
+                            <i class="pi pi-save" style="margin-right: 5px;" ></i>
+                            <b>Guardar</b>
+                        </p:commandLink>
+                    </div>
+
+                </div>
+
+            </h:form>
+        </p:dialog>
+
+    </composite:implementation>
+
+</ui:component>

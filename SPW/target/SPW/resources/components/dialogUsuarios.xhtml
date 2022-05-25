@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:component xmlns="http://www.w3.org/1999/xhtml"
+              xmlns:ui="http://java.sun.com/jsf/facelets"
+              xmlns:f="http://java.sun.com/jsf/core"
+              xmlns:h="http://java.sun.com/jsf/html"
+              xmlns:p="http://primefaces.org/ui"
+              xmlns:composite="http://java.sun.com/jsf/composite">
+
+   
+    
+    <composite:interface>
+        <composite:attribute name="usuario" />
+        <composite:attribute name="contrasena" />
+        <composite:attribute name="esquema" />
+        <composite:attribute name="nombre" />
+        <composite:attribute name="correo" />
+        <composite:attribute name="celular" />
+    </composite:interface>
+
+    <composite:implementation>
+        <!--# {cc.attrs.sak}-->
+
+        <p:dialog header="Agregar / Editar Usuarios" 
+                  widgetVar="dialogUsuario" 
+                  modal="true" 
+                  closable="true" 
+                  width="90%"
+                  style="max-width: 800px;"
+                  styleClass="size"
+                  resizable="false" >
+            <!--enctype="multipart/form-data"-->
+            <h:form id="editUsuario" >
+                <p:messages id="message" 
+                            showDetail="true" 
+                            showSummary="false"
+                            closable="true">
+                    <p:autoUpdate />
+                </p:messages>
+
+                <div class="col-lg-12" >
+
+                    <div class="row">                       
+                        
+                        <div class="col-lg-4">
+                            <p:outputLabel for="@next" value="Usuario: "/><br/>
+                            <p:inputText value="#{cc.attrs.usuario}" 
+                                         id="usur" 
+                                         requiredMessage="Usuario: debe tener al menos 5 caracteres"
+                                         required="true"
+                                         class="pull-left"
+                                         style="width: 100%; 
+                                         margin-bottom: 15px;" 
+                                         placeholder="Usuario"/>          
+                        </div>
+
+                        <div class="col-lg-4">
+                            <p:outputLabel for="@next" value="Contraseña:"/>
+                            <p:selectBooleanCheckbox class="pull-right" value="#{usuarioBean.generarPassword}" itemLabel="Generar">
+                                <p:ajax event="change" update="cont"/>
+                            </p:selectBooleanCheckbox>
+                            <br/>
+                            <p:password  value="#{cc.attrs.contrasena}" 
+                                         disabled="#{usuarioBean.generarPassword}"
+                                         autocomplete="off"
+                                         required="false"
+                                         id="cont" 
+                                         class="pull-right " 
+                                         style="width: 100%; 
+                                         margin-bottom: 15px;" 
+                                         placeholder="-- Encriptada --"/>
+                        </div>
+                        
+                        <div class="col-lg-4">
+                            <p:outputLabel for="@next" value="Esquema:"/><br/>
+                            <p:inputText value="#{cc.attrs.esquema}" 
+                                         id="esq" 
+                                         requiredMessage="Esquema: debe tener al menos 3 caracteres"
+                                         required="true"
+                                         class="pull-left"
+                                         style="width: 100%; 
+                                         margin-bottom: 15px;" 
+                                         placeholder="Esquema"/>          
+                        </div>
+
+                    </div>
+
+                    <div class="row">                       
+
+                        <div class="col-lg-8">
+                            <p:outputLabel for="@next" value="Nombre:"/><br/>
+                            <p:inputText value="#{cc.attrs.nombre}" 
+                                         id="nom" 
+                                         requiredMessage="Nombre: debe tener al menos 5 caracteres"
+                                         required="true"
+                                         class="pull-left" 
+                                         style="width: 100%; 
+                                         margin-bottom: 15px;" 
+                                         placeholder="Nombre"/>
+                        </div>
+
+                        <div class="col-lg-4">
+                            <p:outputLabel for="@next" value="Celular:"/><br/>
+                            <p:inputMask value="#{cc.attrs.celular}" 
+                                         id="cel" 
+                                         mask="999-999-9999"
+                                         requiredMessage="Celular: debe tener al menos 10 caracteres"
+                                         required="true"
+                                         class="pull-right" 
+                                         style="width: 100%; 
+                                         margin-bottom: 15px;" 
+                                         placeholder="Celular"/>
+                        </div>
+
+                    </div>
+
+
+                    <div class="row">                       
+
+                        <div class="col-lg-12">
+                            <p:outputLabel for="@next" value="Correo:"/><br/>
+                            <p:inputText value="#{cc.attrs.correo}" 
+                                         id="corr" 
+                                         type="email"
+                                         requiredMessage="Correo: debe tener al menos 5 caracteres"
+                                         required="true"
+                                         class="pull-left" 
+                                         style="width: 100%; 
+                                         margin-bottom: 35px;" 
+                                         placeholder="Correo"/>
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="row" >
+
+                        <div class="col-lg-3 pull-right">
+                            <p:commandLink id="gua" 
+                                           class="btn btn-primary" 
+                                           actionListener="#{usuarioBean.newEditUsuario()}" 
+                                           title="Guardar" 
+                                           style="width: 100%;"
+                                           update="formUsuario:tablaUsuarios" >
+                                <i class="pi pi-save" style="margin-right: 5px;" ></i>
+                                <b>Guardar</b>
+                            </p:commandLink>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </h:form>
+        </p:dialog>
+
+    </composite:implementation>
+
+</ui:component>

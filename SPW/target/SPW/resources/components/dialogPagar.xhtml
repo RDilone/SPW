@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:component xmlns="http://www.w3.org/1999/xhtml"
+              xmlns:ui="http://java.sun.com/jsf/facelets"
+              xmlns:f="http://java.sun.com/jsf/core"
+              xmlns:h="http://java.sun.com/jsf/html"
+              xmlns:p="http://primefaces.org/ui"
+              xmlns:composite="http://java.sun.com/jsf/composite">
+
+
+    <composite:interface>
+        <composite:attribute name="totalCapital" />
+        <composite:attribute name="totalInteres" />
+        <composite:attribute name="totalCuota" />
+        <composite:attribute name="totalCargoMora" />
+        <composite:attribute name="nombreCliente" />
+        <composite:attribute name="pagoCapital"  />
+        <composite:attribute name="pagoInteres" />
+        <composite:attribute name="cargoMora" />
+        <composite:attribute name="cuotaNum" />
+        <composite:attribute name="balancePendiente" />
+        <composite:attribute name="checkBoxChanges" />
+        <composite:attribute name="checkDisable" />
+        <composite:attribute name="updateElement" />
+        <composite:attribute name="listPagos" type="java.util.List" /> 
+        <composite:attribute name="listPagosSeleccionados" type="java.util.List" /> 
+        <composite:attribute name="checkAll" method-signature="void listener()" />
+        <composite:attribute name="reCalcPago" method-signature="void listener()" />
+        <composite:attribute name="addPagoToList" method-signature="void listener()" />
+        <composite:attribute name="savePago" method-signature="void listener()" />   
+        <composite:attribute name="reiniciar" method-signature="void listener()" />
+    </composite:interface>
+
+
+    <composite:implementation>
+        <!--# {cc.attrs.sak}-->
+
+        <style >
+            
+            
+
+            @media(max-width: 640px){
+                .colHidden {
+                    display: none;
+                }
+            }
+
+            .datepicker {
+                width: 100% !important;
+                margin-bottom: 10px;
+            }
+
+            .total {
+                width: 50% !important;
+                float: right;
+            }
+
+            .ui-datatable-scrollable-theadclone {
+                visibility: collapse;
+            }
+            
+            @media(max-width: 767px){
+                .tableText {
+                    font-size: 0.7em;
+                }
+            }
+
+        </style>
+
+        <p:dialog header="Realizar Pago" 
+                  widgetVar="r_pago" 
+                  resizable="false" 
+                  modal="true"
+                  width="90%"
+                  style="max-width: 900px;
+                         max-height: 600px;
+                         overflow-y: auto;"
+                  position="center">
+
+
+            <h:form id="formPagar" class="form-horizontal">
+                <div class="box-body" style="padding: 0px;">
+                    <div class="col-lg-12" >
+                        <div class="row">
+
+                            <div class="col-lg-12" >
+                                <div class="row" >
+                                    <div class="col-lg-4" >
+                                        <p:outputLabel for="@next" value="Nombre"  /><br/>
+                                        <p>#{cc.attrs.nombreCliente}</p>
+                                    </div>
+                                    
+                                    <div class="col-lg-4" >
+                                        <p:outputLabel for="@next" value="Balance Pendiente"  /><br/>
+                                        <p>#{misPrestamosBean.formatMoney(cc.attrs.balancePendiente)}</p>
+                                    </div>
+                                    
+                                    <div class="col-lg-4" >
+                                        <p:outputLabel for="@next" value="Cuota Num."  /><br/>
+                                        <p>##{cc.attrs.cuotaNum}</p>
+                                    </div>
+                                </div>
+
+                                <div class="row" >
+                                    <div class="col-lg-12" >
+                                        <hr style="margin-top: 10px; border-top: #999 1px solid;"/>
+                                    </div>
+                                </div>
+
+                                <div class="row" style="margin-bottom: 15px;" >
+                                    <div class="col-lg-3" >
+                                        <p:outputLabel for="@next" value="Pago Capital"  /><br/>
+                                        <p:inputNumber value="#{cc.attrs.pagoCapital}"
+                                                       id="pagoC"
+                                                       minValue="0"
+                                                       symbol="RD$. "
+                                                       inputStyleClass="datepicker"
+                                                       title="Pago Capital" >
+                                        </p:inputNumber>
+                                    </div>
+                                    <div class="col-lg-3" >
+                                        <p:outputLabel for="@next" value="Pago Interés" /><br/>
+                                        <p:inputNumber value="#{cc.attrs.pagoInteres}"
+                                                       id="pagoI"
+                                                       minValue="0"
+                                                       symbol="RD$. "
+                                                       inputStyleClass="datepicker"
+                                                       title="Pago Interés" />
+                                    </div>
+                                    <div class="col-lg-3" >
+                                        <!--onclick="this.select();"-->
+                                        <p:outputLabel for="@next" value="Cargo Mora"  /><br/>
+                                        <p:inputNumber value="#{cc.attrs.cargoMora}"
+                                                       id="cargoM"
+                                                       minValue="0"
+                                                       symbol="RD$. "
+                                                       inputStyleClass="datepicker"
+                                                       title="Cargo Mora" >
+                                        </p:inputNumber>
+                                    </div>
+                                    <div class="col-lg-3" >
+                                        <br/> 
+
+                                        <p:commandLink id="reCalc" 
+                                                       action="#{cc.attrs.reCalcPago}"
+                                                       rendered="#{cc.attrs.checkBoxChanges}"
+                                                       update="@([id$=formPagar])"
+                                                       class="btn btn-warning" 
+                                                       style="width: 100%;">           
+                                            <i class="pi pi-replay" ></i>
+                                            <b>Recalcular</b>
+                                        </p:commandLink>
+
+                                        <p:commandLink id="addP" 
+                                                       rendered="#{!cc.attrs.checkBoxChanges}"
+                                                       action="#{cc.attrs.addPagoToList}"
+                                                       update="@([id$=formPagar])"
+                                                       class="btn btn-primary" 
+                                                       style="width: 100%;">           
+                                            <i class="pi pi-arrow-circle-down" ></i>
+                                            <b>Agregar</b>
+                                        </p:commandLink>
+                                    </div>
+                                </div>
+
+                                <div class="row" >
+                                    <div class="col-lg-12" >
+                                        <p:dataTable id="tablaPagos"
+                                                     var="pago"
+                                                     style="text-align: center;"
+                                                     value="#{cc.attrs.listPagos}"
+                                                     tableStyleClass="tableText"
+                                                     scrollable="true"
+                                                     scrollHeight="180"
+                                                     rowKey="#{pago}"
+                                                     selectionMode="multiple"
+                                                     emptyMessage="No hay registros que mostrar">                           
+
+                                            <p:column headerText="check Int." >
+                                                <p:selectBooleanCheckbox disabled="#{cc.attrs.checkDisable}" value="#{pago.check}" >
+                                                    <p:ajax event="change" update="@([id$=formPagar])" listener="#{misPrestamosBean.checkInteres(pago)}" />
+                                                </p:selectBooleanCheckbox>
+                                            </p:column>
+
+                                            <p:column headerText="Cuota Num.">
+                                                <h:outputText value="#{pago.cuotaNum}" />
+                                            </p:column>
+
+                                            <p:column class="colHidden" headerText="Capital">
+                                                <h:outputText value="#{misPrestamosBean.formatMoney(pago.capital)}" />
+                                            </p:column>
+
+                                            <p:column class="colHidden" headerText="Interes" >
+                                                <h:outputText value="#{misPrestamosBean.formatMoney(pago.interes)}" />
+                                            </p:column>
+
+                                            <p:column class="colHidden" headerText="Cargo Mora" >
+                                                <h:outputText value="#{misPrestamosBean.formatMoney(pago.cargoMora)}" />
+                                            </p:column>
+
+                                            <p:column headerText="Cuota" >
+                                                <h:outputText value="#{misPrestamosBean.formatMoney(pago.cuota)}" />
+                                            </p:column>
+
+                                            <p:column headerText="Nota de Pago" >
+                                                <h:outputText value="#{pago.notaPago}" />
+                                            </p:column>
+
+                                            <p:columnGroup type="footer" >
+                                                <p:row style="font-size: 12px;">
+
+                                                    <p:column footerText="" >
+                                                        <f:facet name="footer">
+                                                            <p:commandLink id="s_all" 
+                                                                           action="#{cc.attrs.checkAll}"
+                                                                           disabled="#{cc.attrs.checkDisable}"
+                                                                           update="tablaPagos"
+                                                                           title="Seleccionar todos"
+                                                                           class="btn btn-primary" >           
+                                                                <i class="pi pi-check-square" ></i>
+                                                                <b></b>
+                                                            </p:commandLink>
+                                                        </f:facet>
+                                                    </p:column>
+
+                                                    <p:column 
+                                                        style="text-align: right; font-weight: bold;" 
+                                                        footerText="Total a Pagar RD$." />
+
+                                                    <p:column class="colHidden" footerText="#{misPrestamosBean.formatMoney(cc.attrs.totalCapital)}" 
+                                                              style="font-weight: bold;"/>
+
+                                                    <p:column class="colHidden" footerText="#{misPrestamosBean.formatMoney(cc.attrs.totalInteres)}" 
+                                                              style="font-weight: bold;"/>
+
+                                                    <p:column class="colHidden" footerText="#{misPrestamosBean.formatMoney(cc.attrs.totalCargoMora)}" 
+                                                              style="font-weight: bold;"/>
+
+                                                    <p:column footerText="#{misPrestamosBean.formatMoney(cc.attrs.totalCuota)}" 
+                                                              style="font-weight: bold;"/>
+
+                                                    <p:column footerText="" />
+                                                </p:row>
+
+                                            </p:columnGroup>
+
+                                        </p:dataTable>
+                                    </div>
+                                </div>    
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="footer" style="margin-top: 25px;">
+
+
+                    <div class="col-sm-12 col-md-6 col-lg-3 col-lg-offset-6" >
+                        <p:commandLink id="res" 
+                                       action="#{cc.attrs.reiniciar}"
+                                       update="@([id$=formPagar])"
+                                       class="btn btn-warning" 
+                                       style="width: 100%; margin-bottom: 10px;">           
+                            <i class="pi pi-refresh" ></i>
+                            <b>Reiniciar</b>
+                        </p:commandLink>
+                    </div>
+
+                    <div class="col-sm-12 col-md-6 col-lg-3" >
+                        <p:commandLink id="pay" 
+                                       action="#{cc.attrs.savePago}"
+                                       update="#{cc.attrs.updateElement}"
+                                       class="btn btn-primary" 
+                                       style="width: 100%; margin-bottom: 10px;">           
+                            <i class="pi pi-dollar" ></i>
+                            <b>Confirmar Pago</b>
+                        </p:commandLink>
+                    </div>
+                </div>
+            </h:form>
+        </p:dialog> 
+
+        <script >
+
+            $(document).ready(function () {
+                document.getElementById("capt").style.display = "none";
+            });
+            
+        </script>
+
+    </composite:implementation>
+
+</ui:component>

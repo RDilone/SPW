@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:adm="http://github.com/adminfaces"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <title>AdminFaces</title>
+        <meta charset="utf-8"/>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+        <meta name="theme-color" content="#444"/>
+        <meta name="mobile-web-app-capable" content="yes"/>
+
+        <h:outputScript library="js" name="admintemplate.js" target="head"/>
+
+        <style type="text/css">
+            
+            
+            
+            body .load-bar {
+                margin-top: -20px;
+            }   
+
+            .loginButton {
+                cursor: pointer; 
+                color: #fff; 
+                font-weight: bold; 
+                font-size: 16px; 
+                width: 100%;
+                text-decoration: none; 
+                background-color: #ff7b00; 
+                border: none; 
+                border-radius: 4px; 
+                margin: 0px; 
+                padding: 7px 12px;
+            }
+
+
+            /* below css hides growls in small screens and makes messages visible */
+            @media (max-width: 400px) {
+
+                body div.ui-growl {
+                    display: none;
+                }
+
+                body div.ui-messages {
+                    display: block;
+                }
+
+            }
+
+            /* below css hides messages in medium/big devices and makes growl visible in such devices */
+            @media (min-width: 400px) {
+                body div.ui-growl {
+                    display: block;
+                }
+
+                body div.ui-messages {
+                    display: none;
+                }
+            }
+
+            body.login-page {
+                background-color: transparent;
+            }
+
+            html {
+                background: url(#{resource[ 'images:fondo.jpg' ]}) no-repeat center center fixed;
+                -webkit-background-size: cover;
+                -moz-background-size: cover;
+                -o-background-size: cover;
+                background-size: cover;
+            }
+
+            @media (max-width: 400px) {
+                html {
+                    background-image: url(#{resource[ 'images:fondo.jpg' ]});
+                }
+            }
+            .login-box-body{
+                box-shadow: 0px 0px 4px 4px rgba(0, 0, 0, .4);
+            }
+
+
+        </style>
+    </h:head>
+
+    <h:body styleClass="hold-transition login-page">
+
+
+
+        <h:form id="loginForm">
+
+            <div class="login-box">
+                <div class="login-logo" style="text-align: center;">
+                    <b style="font-size: 50px;">SPW</b>
+                    <p style="font-size: 20px;">Tu préstamos, fáciles y ordenados!</p>
+                </div>
+                <!-- /.login-logo -->
+                <div class="box login-box-body">
+
+                    <p class="login-box-msg">Bienvenido / a</p>
+                    <p:messages closable="true"/>
+
+                    <div class="form-group has-feedback">
+                        <p:inputText value="#{navigationBean.user}" type="text" styleClass="form-control" placeholder="Usuario"
+                                     required="true"
+                                     requiredMessage="Usuario requerido"/>
+                        <i class="fa fa-user form-control-feedback" ></i>
+                    </div>
+                    <div class="form-group has-feedback">
+                        <p:inputText value="#{navigationBean.pass}"  type="password" styleClass="form-control"
+                                     placeholder="Contraseña" required="true"
+                                     requiredMessage="Contraseña requerida"/>
+                        <i class="fa fa-lock form-control-feedback" style="font-size: 18px"></i>
+                    </div>
+
+                    <p:spacer/>
+
+                    <h:commandButton type="submit"                                             
+                                     id="login" 
+                                     action="#{navigationBean.login()}" 
+                                     value="Iniciar Sesión" 
+                                     class="loginButton" />            
+
+                </div>
+            </div>
+        </h:form>
+
+    </h:body>
+</html>

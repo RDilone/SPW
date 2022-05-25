@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui" 
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:components="http://xmlns.jcp.org/jsf/composite/components">
+
+    <style >
+
+        .box-footer {
+            padding-right: 5px;
+        }
+
+        .skin-blue .sidebar-menu > li:hover>a, 
+        .skin-blue .sidebar-menu > li.active > a,
+        .skin-blue .sidebar-menu > li.menu-open > a {
+
+            background: #272b30;
+        }
+
+        .skin-blue .sidebar-menu >li > .treeview-menu {
+            background: #272b30;
+        }
+
+
+        .skin-blue .sidebar a {
+            color: #fff;
+        }
+
+        .skin-blue .sidebar-menu .treeview-menu > li > a {
+            color: #fff;
+        }
+
+        .skin-blue .sidebar-menu .treeview-menu > li > a :hover {
+            color: #8aa4af;
+        }
+
+    </style>
+
+
+    <h:form id="sideBardForm">
+        <ul class="sidebar-menu tree" data-widget="tree">
+
+            <!--            <li class="header">
+                            Datos de Usuario      
+                        </li>-->
+
+            <li>
+                <p:commandLink action="#" 
+                               style="margin-bottom: 20px;" 
+                               update="@([id$=principal])"
+                               actionListener="#{navigationBean.showWelcome()}" >
+                    <i class="pi pi-at"></i>
+                    <span>Nombre Usuario</span>
+                </p:commandLink>
+            </li>
+
+
+
+            <li class="header">
+                Menú de Opciones
+            </li>
+            <!-- Ejemplo para ejecutar un metodo al acceder a una opcion: 
+                 action="# {historialEvaluacionesBean.updateListaEvaluaciones()}"
+            
+                 Ejemplo para llamar pagina: 
+                 actionListener="# {navigationBean.ejemploLlamarPagina}"
+            -->
+
+            <li class="treeview">
+                <a href="#" >           
+                    <i class="pi pi-briefcase"></i>
+                    <span>Mis Préstamos</span>
+                    <!--<i class="fa-solid fa-angle-left fa-xs"></i>-->
+                    <span style="float: right; margin-right: 20px;" >
+                        <i class="pi pi-angle-left"></i>
+                    </span>
+                </a>
+                <ul class="treeview-menu">                   
+                    <li>
+                        <p:commandLink update="@([id$=principal])" 
+                                       actionListener="#{navigationBean.showMisPrestamos}">
+                            <i class="pi pi-credit-card"></i>
+                            <span>Pendientes</span>               
+                        </p:commandLink>
+                    </li>
+
+                    <li>
+                        <p:commandLink  actionListener="#{navigationBean.showMisPrestamosSaldados()}" 
+                                        action="#{misPrestamosSaldados.fillListPrestamosSaldados()}" 
+                                        update="@([id$=principal])">
+                            <i class="pi pi-wallet"></i>
+                            <span>Saldados</span>
+                        </p:commandLink>
+                    </li>   
+
+                </ul>
+            </li>
+
+
+
+            <li>
+                <p:commandLink update="@([id$=principal])" 
+                               actionListener="#{navigationBean.showNuevoPrestamo}">
+                    <i class="pi pi-id-card"></i>   
+                    <span>Nuevo Préstamo</span>               
+                </p:commandLink>
+            </li>
+
+
+
+            <li class="treeview">
+                <a href="#" >           
+                    <i class="pi pi-box"></i>
+                    <span>Ajustes</span>
+                    <!--<i class="fa-solid fa-angle-left fa-xs"></i>-->
+                    <span style="float: right; margin-right: 20px;" >
+                        <i class="pi pi-angle-left"></i>
+                    </span>
+                </a>
+                <ul class="treeview-menu">                   
+                    <li>
+                        <p:commandLink update="@([id$=principal])"
+                                       actionListener="#{navigationBean.showPersona}" >
+                            <i class="pi pi-users"></i>
+                            <span>Personas</span>
+                        </p:commandLink>
+                    </li>
+
+                    <li>
+                        <p:commandLink  actionListener="#{navigationBean.showIntervalo}" 
+                                        action="#{intervaloBean.fillListIntervalo()}" 
+                                        update="@([id$=principal])">
+                            <i class="pi pi-calendar-times"></i>
+                            <span>Intervalos</span>
+                        </p:commandLink>
+                    </li>   
+
+                    <li>
+                        <p:commandLink  actionListener="#{navigationBean.showPermisos()}" 
+                                        update="@([id$=principal])">
+                            <i class="pi pi-unlock"></i>
+                            <span>Permisos</span>
+                        </p:commandLink>
+                    </li>  
+
+                    <li>
+                        <p:commandLink  actionListener="#{navigationBean.showUsuario()}"  
+                                        update="@([id$=principal])">
+                            <i class="pi pi-user"></i>
+                            <span>Usuarios</span>
+                        </p:commandLink>
+                    </li>   
+                    
+                    <li>
+                        <p:commandLink  actionListener="#{navigationBean.showAjustesReporte()}"  
+                                        update="@([id$=principal])">
+                            <i class="pi pi-file-o"></i>
+                            <span>Ajustes Reporte</span>
+                        </p:commandLink>
+                    </li>   
+
+                    <li>
+                        <p:commandLink  actionListener="#{navigationBean.showContrasena()}"  
+                                        action="#{navigationBean.cleanFields()}"
+                                        update="@([id$=principal])">
+                            <i class="pi pi-key"></i>
+                            <span>Cambiar Contraseña</span>
+                        </p:commandLink>
+                    </li>   
+
+                </ul>
+            </li>
+
+            <li >
+                <p:commandLink actionListener="#{navigationBean.showReportes()}" 
+                               update="@([id$=principal])" >            
+                    <i class="pi pi-file"></i>
+                    <span>Reportes</span>
+                </p:commandLink>
+            </li>
+            <li class="header">
+                Salir
+            </li>
+            <li >
+                <p:commandLink action="index.xhtml?faces-redirect=true" >            
+                    <i class="pi pi-sign-out"></i>
+                    <span><b>Cerrar Sesión</b></span>
+                </p:commandLink>
+            </li>
+        </ul>
+
+        <!--        <p:commandButton value="Cerrar Sesión" 
+                                 style="margin-top: 100%; 
+                                        margin-left: 10%; 
+                                        width: 80%;"/>-->
+    </h:form>
+
+
+
+</ui:composition>

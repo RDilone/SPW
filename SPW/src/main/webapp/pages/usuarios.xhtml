@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:components="http://xmlns.jcp.org/jsf/composite/components">
+
+
+    <style>
+
+        .newForm {
+            font-family: 'Varela Round', sans-serif;
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+            padding: 20px;
+            width: 100%;
+            border-radius: 10px;   
+            background-color: white;
+            box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 1px 0px, 
+                rgba(60, 64, 67, 0.15) 1.5px 1.5px 3px 1px;
+        }
+
+        .titulo2 {
+            font-family: 'Varela Round', sans-serif;
+            font-weight: bold;
+            font-size: 1.5em;
+            margin: 0px
+        }
+
+    </style>
+
+    <h:form id="formUsuario" >
+
+        <div class="col-xs-12" >
+
+            <div class="row" >
+                <div class="newForm" >
+
+                    <div class="col-xs-12 col-sm-6" >                   
+                        <p class="titulo2" >
+                            <img height="50" 
+                                 style="margin-right: 10px; 
+                                        margin-bottom: 10px;" 
+                                        src="resources/images/businessman.png" /> 
+                            Administración de Usuarios
+                        </p>
+                    </div>
+
+                    <div class="col-xs-12 col-sm-6">
+                        <p:outputLabel style="margin-top: 10px; text-shadow: rgba(255,255,255,255) 0px 2px 4px;" 
+                                       value="Menú de Opciones: Click derecho en una fila de la tabla" />
+                    </div>
+
+
+                    <div class="col-xs-12" >
+                        <div class="row" >
+                            <hr style="margin-top: 10px; border-top: #eaeaea 1px solid;"/>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-12" style="margin-bottom: 10px;" >
+                        <div class="row" >
+                            <p:dataTable id="tablaUsuarios"
+                                         var="usr"
+                                         value="#{usuarioBean.listUsuario}"
+                                         filteredValue="#{usuarioBean.listEmptyUsuario}"
+                                         selection="#{usuarioBean.usuarioSeleccionado}"
+                                         selectionMode="single"
+                                         rowKey="#{usr.idUsuario}"
+                                         emptyMessage="No hay registros que mostrar">
+
+                                <p:ajax update="@([id$=rmenu])" event="rowSelect" />
+
+                                <p:column headerText="ID" width="80" responsivePriority="4">
+                                    <h:outputText value="#{usr.idUsuario}" />
+                                </p:column>
+
+                                <p:column headerText="Usuario" >
+                                    <h:outputText value="#{usr.usuario}" />
+                                </p:column>
+
+                                <p:column headerText="Contraseña" responsivePriority="5" >
+                                    <h:outputText style="font-family: cursive; color: grey;" value="-- Encriptada --" />
+                                </p:column>
+
+                                <p:column headerText="Esquema" >
+                                    <h:outputText value="#{usr.esquema}" />
+                                </p:column>
+
+                                <p:column headerText="Nombre (Buscar)" width="150" filterBy="#{usr.nombre}" filterMatchMode="contains">
+                                    <h:outputText value="#{usr.nombre}" />
+                                </p:column>
+
+                                <p:column headerText="Correo" width="220" responsivePriority="6" >
+                                    <h:outputText value="#{usr.correo}" />
+                                </p:column>
+
+                                <p:column headerText="Celular" responsivePriority="3" >
+                                    <h:outputText value="#{usr.celular}" />
+                                </p:column>
+
+                                <f:facet name="footer">Cantidad de registros: [ #{usuarioBean.listUsuario.size()} ]</f:facet>
+
+                            </p:dataTable>
+                        </div>
+                    </div>
+
+                </div>   
+            </div>
+        </div>
+
+
+
+
+
+        <!--Confirm Dialog-->
+        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+            <p:commandButton value="SI" 
+                             type="button" 
+                             styleClass="ui-confirmdialog-yes" 
+                             icon="pi pi-check" />
+
+            <p:commandButton value="NO" 
+                             type="button"
+                             styleClass="ui-confirmdialog-no" 
+                             icon="pi pi-times" />
+        </p:confirmDialog>
+
+        <!--Context Menu-->
+        <p:contextMenu for="tablaUsuarios" id="rmenu">
+            <p:menuitem value="Nuevo Usuario"                  
+                        update="@([id$=editUsuario])"                                  
+                        onclick="PF('dialogUsuario').show();"
+                        actionListener="#{usuarioBean.cleanFields()}" 
+                        action="#{usuarioBean.setNewEditUsuario(true)}" 
+                        icon="pi pi-plus-circle"/>
+
+            <p:menuitem value="Editar"                              
+                        onclick="PF('dialogUsuario').show();" 
+                        disabled="#{!usuarioBean.rowSelected}"
+                        update="@([id$=editUsuario])" 
+                        actionListener="#{usuarioBean.editUsuario()}" 
+                        action="#{usuarioBean.setNewEditUsuario(false)}" 
+                        icon="pi pi-pencil"/>
+
+            <p:menuitem value="Borrar"   
+                        disabled="#{!usuarioBean.rowSelected}"
+                        actionListener="#{usuarioBean.removeUsuario()}" 
+                        update="tablaUsuarios" 
+                        icon="pi pi-trash" >
+                <p:confirm header="Confirmación" 
+                           message="Está seguro que desea eliminar este Usuario?" 
+                           icon="pi pi-info-circle" />
+            </p:menuitem>
+            
+            <p:menuitem value="Perfil"         
+                        update="@([id$=editPerfil])"
+                        onclick="PF('dialogPerfil').show();"
+                        disabled="#{!usuarioBean.rowSelected}"
+                        action="#{usuarioBean.fillListPermisoDisponibles()}"
+                        actionListener="#{usuarioBean.fillListPermisoSeleccionados()}"  
+                        icon="pi pi-unlock"/>
+        </p:contextMenu>
+
+    </h:form>
+
+
+    <!--Componentes -->
+
+    <components:dialogUsuarios usuario="#{usuarioBean.usuario}"
+                               contrasena="#{usuarioBean.contrasena}"
+                               esquema="#{usuarioBean.esquema}"
+                               nombre="#{usuarioBean.nombre}"
+                               correo="#{usuarioBean.correo}"
+                               celular="#{usuarioBean.celular}"/>
+
+    <components:dialogPerfiles nombreUsuario="#{usuarioBean.usuarioSeleccionado.nombre}" />
+
+
+</ui:composition>
+
+

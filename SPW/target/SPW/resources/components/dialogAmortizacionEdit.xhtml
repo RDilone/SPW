@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:component xmlns="http://www.w3.org/1999/xhtml"
+              xmlns:ui="http://java.sun.com/jsf/facelets"
+              xmlns:f="http://java.sun.com/jsf/core"
+              xmlns:h="http://java.sun.com/jsf/html"
+              xmlns:p="http://primefaces.org/ui"
+              xmlns:composite="http://xmlns.jcp.org/jsf/composite">
+
+    <composite:interface>
+        <composite:attribute name="listAmortizacion" type="java.util.List" />    
+        <composite:attribute name="executeActions" method-signature="void listener()" />  
+        <composite:attribute name="enviarCorreo" />
+        <composite:attribute name="imprimirPdf" />
+    </composite:interface>
+
+    <composite:implementation>
+        <!--# {cc.attrs.sak}-->
+
+
+        <script type="text/javascript">
+
+            PrimeFaces.locales['es'] = {
+                closeText: 'Cerrar',
+                prevText: 'Anterior',
+                nextText: 'Siguiente',
+                monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+                dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+                dayNamesMin: ['D', 'L', 'M', 'X', 'J', 'V', 'S'],
+                weekHeader: 'Semana',
+                firstDay: 1,
+                isRTL: false,
+                showMonthAfterYear: false,
+                yearSuffix: '',
+                timeOnlyTitle: 'Sólo hora',
+                timeText: 'Tiempo',
+                hourText: 'Hora',
+                minuteText: 'Minuto',
+                secondText: 'Segundo',
+                currentText: 'Fecha actual',
+                ampm: false,
+                month: 'Mes',
+                week: 'Semana',
+                day: 'Día',
+                allDayText: 'Todo el día'
+            };
+
+
+        </script>
+
+        <style >
+            .ui-datatable-scrollable-theadclone {
+                visibility: collapse;
+            }
+
+            .alignItems {
+                vertical-align: top;
+            }
+            
+            .marginB {
+                margin-bottom: 25px;
+            }
+            
+            @media(max-width: 767px){
+                .tableText {
+                    font-size: 0.7em;
+                }
+            }
+
+        </style>
+
+        <p:dialog header="Tabla de Amortización" 
+                  widgetVar="t_amo_edit" 
+                  resizable="false" 
+                  modal="true" 
+                  width="90%"
+                  style="max-height: 600px;
+                         overflow-y: auto;"
+                  position="center" >
+
+
+            <h:form id="formAmortizacionEdit" class="form-horizontal">
+                <div class="col-xs-12">
+
+                    <div class="row">
+                        <div class="col-lg-12" style="padding: 0px; text-align: center;">
+
+                            <p:dataTable var="amo" 
+                                         id="tablaAmortizacion"
+                                         paginator="false"
+                                         tableStyleClass="tableText"
+                                         scrollable="true"
+                                         scrollHeight="250"
+                                         emptyMessage="No hay registros que mostrar" 
+                                         value="#{cc.attrs.listAmortizacion}">
+
+                                <p:column headerText="Número de Cuota"  >
+                                    <h:outputText value="#{amo.cuotaNum}" />
+                                </p:column>
+
+                                <p:column headerText="Pago Capital" responsivePriority="6" >
+                                    <h:outputText value="#{amo.pagoCapital}" >
+                                        <f:convertNumber pattern="###,###,###,###.##" locale="es_DO"/>
+                                    </h:outputText>
+                                </p:column>
+
+                                <p:column headerText="Pago Interés" responsivePriority="6" >
+                                    <h:outputText value="#{amo.pagoInteres}" >
+                                        <f:convertNumber pattern="###,###,###,###.##" locale="es_DO"/>
+                                    </h:outputText>
+                                </p:column>
+
+                                <p:column headerText="Cuota" >
+                                    <h:outputText value="#{amo.cuota}" >
+                                        <f:convertNumber pattern="###,###,###,###.##" locale="es_DO"/>
+                                    </h:outputText>
+                                </p:column>
+
+                                <p:column headerText="Saldo" responsivePriority="5" >
+                                    <h:outputText value="#{amo.saldo}" >
+                                        <f:convertNumber pattern="###,###,###,###.##" locale="es_DO"/>
+                                    </h:outputText>
+                                </p:column>
+
+                                <p:column headerText="Fecha de pago" >
+                                    <h:outputText value="#{amo.fecha}" >
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    </h:outputText>
+                                </p:column>
+
+                                <p:column headerText="Estado" >
+                                    <h:outputText style="color: #{detallePrestamoBean.getColorByEstado(amo.estado)};" value="#{amo.estado}" />
+                                </p:column>
+
+                                <p:columnGroup type="footer" >
+                                    <p:row style="font-size: 12px;">
+                                        <!-- Area de totales:
+                                                - se calculan cada vez que se agregan o se eliminan filas
+                                        -->
+                                        <p:column colspan="5" 
+                                                  style="text-align: right; font-weight: bold;" 
+                                                  footerText="Total Pendiente RD$." />
+
+                                        <p:column footerText="#{detallePrestamoBean.formatMoney(detallePrestamoBean.totalPagoCapital)}" 
+                                                  responsivePriority="6"
+                                                  style="font-weight: bold;"/>
+
+                                        <p:column footerText="#{detallePrestamoBean.formatMoney(detallePrestamoBean.totalPagoInteres)}" 
+                                                  responsivePriority="6"
+                                                  style="font-weight: bold;"/>
+
+                                        <p:column footerText="#{detallePrestamoBean.formatMoney(detallePrestamoBean.totalCuota)}" 
+                                                  style="font-weight: bold;"/>
+
+                                        <p:column footerText="#{detallePrestamoBean.formatMoney(detallePrestamoBean.totalSaldo)}" 
+                                                  responsivePriority="5"
+                                                  style="font-weight: bold;"/>
+
+                                        <p:column  />
+
+                                        <p:column footerText="#{detallePrestamoBean.cantCuotasPagadas} (PAGADOS)" 
+                                                  style="font-weight: bold;"/>
+
+                                    </p:row>
+                                </p:columnGroup>
+
+                            </p:dataTable>
+
+
+                        </div>
+
+                    </div>
+
+
+
+
+                    <div class="row" style="padding-right: 5px; margin-top: 25px;">
+
+
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 pull-left marginB" >
+                            <h:panelGrid style="margin-left: 20px;" columns="4" cellspacing="5" 
+                                         columnClasses="alignItems, alignItems, alignItems, alignItems">
+                                <p:outputLabel value="Enviar por correo" style="margin-right: 5px;"/>
+                                <p:toggleSwitch value="#{cc.attrs.enviarCorreo}" style="margin-right: 20px;" />
+                                
+                                <p:outputLabel  value="Imprimir PDF" style="margin-right: 5px;"/>
+                                <p:toggleSwitch value="#{cc.attrs.imprimirPdf}" />
+                            </h:panelGrid>
+                        </div>
+
+
+                        <div class="col-lg-2 col-md-3 col-sm-6 col-xs-12 pull-right" >
+                            <p:commandLink class="btn btn-primary" 
+                                           style="width: 100%; margin-bottom: 15px;" 
+                                           action="#{cc.attrs.executeActions}"
+                                           onclick="PF('t_amo_edit').hide();" >
+                                <i class="pi pi-send" style="padding-right: 5px;" ></i>
+                                <b>Enviar</b>
+                            </p:commandLink>
+                        </div>
+
+                        <div class="col-lg-2 col-md-3 col-sm-6 col-xs-12 pull-right" >
+                            <p:commandLink class="btn btn-danger" 
+                                           style="width: 100%; margin-bottom: 15px;" 
+                                           onclick="PF('t_amo_edit').hide();">
+                                <i class="pi pi-arrow-circle-left" style="padding-right: 5px;" ></i>
+                                <b>Atrás</b>
+                            </p:commandLink>
+                        </div>
+                    </div>
+                </div>
+            </h:form>
+        </p:dialog>     
+
+
+    </composite:implementation>
+
+</ui:component>

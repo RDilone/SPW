@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:components="http://xmlns.jcp.org/jsf/composite/components">
+
+
+
+    <style >
+
+        .newForm {
+            font-family: 'Varela Round', sans-serif;
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+            padding: 20px;
+            padding-bottom: 40px;
+            width: 100%;
+            border-radius: 10px;   
+            background-color: white;
+            box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 1px 0px, 
+                rgba(60, 64, 67, 0.15) 1.5px 1.5px 3px 1px;
+        }
+
+        .titulo2 {
+            font-family: 'Varela Round', sans-serif;
+            font-weight: bold;
+            font-size: 1.5em;
+            margin: 0px
+        }
+
+        .listBox {
+            width: 330px;
+            height: 200px;
+            overflow-y: auto;
+        }
+
+        .titulo1 {
+            font-size: 1.4em !important;
+            margin-left: 10px;
+        }
+
+    </style>
+
+    <h:form id="formAjustesReporte" >
+
+        <div class="col-xs-9" >
+            <div class="newForm" >
+                <div class="col-xs-12 padless" style="margin-bottom: 10px;" >                   
+                    <p class="titulo2" >
+                        <img height="50" 
+                             style="margin-right: 10px;" 
+                             src="resources/images/setting_report.png" /> 
+                        Ajuste Reportes
+                    </p>
+                </div>
+
+                <div class="col-xs-12" >
+                    <div class="row" >
+                        <hr style="margin-top: 10px; border-top: #eaeaea 1px solid;"/>
+                    </div>
+                </div>
+
+                <div class="col-xs-12 col-sm-6" >
+                    <p:outputLabel for="@next" class="titulo1" value="Reportes"/><br/>
+                    <p:selectOneListbox id="listRep"
+                                        styleClass="listBox"
+                                        value="#{ajustesReporteBean.reporteSeleccionado}" 
+                                        converter="omnifaces.SelectItemsIndexConverter" >
+
+                        <p:ajax update="@([id$=menuRep]) @([id$=listParam])" 
+                                listener="#{ajustesReporteBean.updateParameterList(ajustesReporteBean.reporteSeleccionado)}" 
+                                event="click" />
+                        
+                        <f:selectItems value="#{ajustesReporteBean.listFileReporte}" 
+                                       var="rep" 
+                                       itemLabel="#{rep}" 
+                                       itemValue="#{rep}" />
+                    </p:selectOneListbox>     
+                </div>
+
+                <div class="col-xs-12 col-sm-6" >
+                    <p:outputLabel for="@next" class="titulo1" value="Parametros"/><br/>
+                    <p:selectOneListbox id="listParam" 
+                                        value="#{ajustesReporteBean.parametroSeleccionado}" 
+                                        converter="omnifaces.SelectItemsIndexConverter" 
+                                        styleClass="listBox" >
+                        
+                        <p:ajax update="@([id$=menuParam])" event="click" />
+
+                        <f:selectItems value="#{ajustesReporteBean.listReporteParametros}" 
+                                       var="par" 
+                                       itemLabel="#{par.parametro}" 
+                                       itemValue="#{par}" />
+                    </p:selectOneListbox>     
+                </div>
+
+            </div>  
+        </div>
+        <!--menus click derecho-->
+
+        <p:contextMenu for="listRep" id="menuRep">
+            <p:menuitem value="Agregar Parametro"                  
+                        update="@([id$=listParam])"
+                        disabled="#{ajustesReporteBean.reportSelected}"
+                        onclick="PF('dialogAddParameter').show();"
+                        icon="pi pi-plus-circle"/>       
+        </p:contextMenu>
+
+        <p:contextMenu for="listParam" id="menuParam">
+            <p:menuitem value="Eliminar"
+                        disabled="#{ajustesReporteBean.parameterSelected}"
+                        actionListener="#{ajustesReporteBean.delParametro()}"
+                        update="@([id$=listParam])"
+                        icon="pi pi-trash"/>
+        </p:contextMenu>
+
+
+    </h:form>
+
+
+    <components:dialogParametros addParameter="#{ajustesReporteBean.addParametro()}" 
+                                 nombreParametro="#{ajustesReporteBean.nombreParametro}" 
+                                 updateElement="@([id$=listParam])"/>
+
+</ui:composition>
+
+
