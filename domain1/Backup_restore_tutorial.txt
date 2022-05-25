@@ -1,0 +1,15 @@
+Backup & Restore of Payara Server
+
+Since the domain directory is where all of the user configuration of Payara Server is kept, we can consider this to be separate to the installation files that Payara Server uses to run the app server itself. We can backup the domain using the asadmin backup-domain command as follows:
+
+asadmin backup-domain --backupDir /path/to/backup/directory myDomain
+
+The effect of this command is to create a full backup of the domain directory, however, to complete the command the domain must be stopped. This will mean that any application deployed to the DAS is unavailable while the backup takes place.
+
+The job of running this backup command on a given schedule and managing the resulting backed up files needs to be done by a script external to Payara Server.
+
+To restore from a backup the asadmin restore-domain command is used:
+
+asadmin restore-domain --filename ${name} --backupdir /path/to/backup/directory myDomain
+
+This command will restore just the domain named in the command. Since instances are stored separately to each domain (and may be on remote hosts), the command will have no effect on instances.
