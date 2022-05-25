@@ -1,14 +1,17 @@
-…or create a new repository on the command line
-echo "# SPW" >> README.md
+Git global setup
+
+git config --global user.name "Jose Emmanuel Dilone Lazala"
+git config --global user.email "jodilone@edenorte.com.do"
+
+Create a new repository on the command line
 git init
 git add README.md
 git commit -m "first commit"
 git branch -M main
-git remote add origin git@github.com:RDilone/SPW.git
+git remote add origin git@github.com:RDilone/SPW
 git push -u origin main
 
-
-…or push an existing repository from the command line
-git remote add origin git@github.com:RDilone/SPW.git
+push an existing repository from the command line
+git remote add origin git@github.com:RDilone/SPW
 git branch -M main
 git push -u origin main
