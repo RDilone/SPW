@@ -66,8 +66,8 @@
             margin-bottom: 0px;
             font-size: 1.3em;
         }
-
-        .report {
+        
+        .newForm {
             font-family: 'Varela Round', sans-serif;
             display: flex;
             flex-wrap: wrap;
@@ -215,7 +215,7 @@
                 width: 100%;
                 height: 60px;
                 margin-bottom: 15px;
-                padding: 1em 1.5em;
+                padding: 1em;
                 background-color: #0077b6;
                 text-decoration: none;
                 color: white;
@@ -232,7 +232,7 @@
                 visibility: visible;
             }
         }
-      
+
 
         .fullSize {
             width: 100% !important;
@@ -246,13 +246,26 @@
 
     </style>
 
-    <!--<p class="titulo2" style="font-size: 2em; margin-bottom: 30px;" >Bienvenido</p>-->
-    <p class="titulo4" >Galería de Reportes</p>
+
+    <div class="col-xs-12" >
+        <div class="row" >
+            <div class="newForm" >
+                <div class="col-xs-12 col-sm-8" >
+                    <p class="titulo2" >
+                        <img height="50" style="margin-right: 10px;" src="resources/images/report.png" /> 
+                        Galería de Reportes
+                    </p>                                                
+                </div>
+                
+            </div>   
+        </div>
+    </div>
+
 
     <p:repeat value="#{reporteBean.listCustomReporte}" var="rep" varStatus="spr" >
         <div class="col-xs-12 col-md-6 col-lg-4 padleft" >
 
-            <div class="report motivo" >
+            <div class="newForm motivo" >
                 <div class="col-xs-12 padless" >                   
                     <p class="titulo3" >
                         <img height="50" 
@@ -261,14 +274,14 @@
                         <span style="margin: auto 0px;">#{rep.nombre}</span>
                     </p>
                 </div>   
-               
+
                 <components:parametrosReporte 
-                            reporte="#{rep}"
-                            listValores="#{rep.listValores}"
-                            listFechaParametros="#{rep.listFechaParametros}" />
-                
+                    reporte="#{rep}"
+                    listValores="#{rep.listValores}"
+                    listFechaParametros="#{rep.listFechaParametros}" />
+
                 <br/>
-                
+
                 <!--                action="# {reporteBean.printReport(rep)}"-->
                 <div class="col-xs-12 padless" >
                     <p:commandLink id="addP" 
@@ -285,168 +298,6 @@
 
         </div>
     </p:repeat>
-
-
-    <!--    <div class="col-xs-12 col-md-6 col-lg-4 padleft" >
-            <p:commandLink >
-                <div class="report motivo" >
-                    <div class="col-xs-12 col-sm-6 col-md-12 padless" >                   
-                        <p class="titulo3" >
-                            <img height="50" 
-                                 style="margin-right: 10px;" 
-                                 src="resources/images/report-default.png" /> 
-                            Reporte Resumen Pagos
-                        </p>
-                    </div>  
-                </div>  
-            </p:commandLink>
-        </div>
-    
-    
-    
-        <div class="col-xs-12 col-md-6 col-lg-4 padleft" >
-            <p:commandLink >
-                <div class="report motivo" >
-                    <div class="col-xs-12 col-sm-6 col-md-12 padless" >                   
-                        <p class="titulo3" >
-                            <img height="50" 
-                                 style="margin-right: 10px;" 
-                                 src="resources/images/report-default.png" /> 
-                            Reporte Total General
-                        </p>
-                    </div>  
-                </div>  
-            </p:commandLink>
-        </div>-->
-
-
-    <!--    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 padleft"  >
-            <p:commandLink >
-                <div class="newForm motivo1" >
-                    <div class="col-xs-12 col-sm-6 col-md-12" >                   
-                        <p class="titulo3" >
-                            <img height="50" style="margin-right: 15px;" src="resources/images/loan.png" /> 
-                            Préstamos Pendientes
-                        </p>
-                    </div>  
-                </div>
-            </p:commandLink>
-        </div>
-    
-    
-        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 padleft" >
-            <p:commandLink >
-                <div class="newForm motivo2" style="" >
-                    <div class="col-xs-12 col-sm-6 col-md-12" >                   
-                        <p class="titulo3" >
-                            <img height="50" style="margin-right: 15px;" src="resources/images/time-money.png" /> 
-                            Préstamos Saldados
-                        </p>
-                    </div>  
-                </div>
-            </p:commandLink>
-        </div>
-    
-    
-        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 padleft" >
-            <p:commandLink >
-                <div class="newForm motivo3" style="" >
-                    <div class="col-xs-12 col-sm-6 col-md-12" >                   
-                        <p class="titulo3" >
-                            <img height="50" style="margin-right: 15px;" src="resources/images/insurance.png" /> 
-                            Nuevo Préstamo
-                        </p>
-                    </div>  
-                </div>
-            </p:commandLink>
-        </div>
-    
-    
-        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 padleft" >
-            <p:commandLink >
-                <div class="newForm motivo4" style="" >
-                    <div class="col-xs-12 col-sm-6 col-md-12" >                   
-                        <p class="titulo3" >
-                            <img height="50" style="margin-right: 15px;" src="resources/images/report.png" /> 
-                            Reportes Estadísticos
-                        </p>
-                    </div>  
-                </div>
-            </p:commandLink>
-        </div>-->
-
-
-    <div class="col-xs-12 padless" style="margin-bottom: 20px; display: none;" >
-        <div class="tarjeta" >
-            <div class="col-xs-12 col-sm-4 col-md-3 padless flexDisplay" >
-                <div class="detalle" >
-                    <p:graphicImage url="resources/images/cedula_juan.jpeg"
-                                    class="image" /> 
-                </div>
-            </div>
-
-
-            <div class="col-xs-12 col-sm-6 col-md-7" style="padding-left: 25px; padding-top: 5px;">
-                <div class="row" >
-                    <div class="col-sm-12" >
-                        <h4 class="titulo">JUAN BATISTA CARGIA</h4>
-                    </div>
-                </div>
-
-                <div class="col-xs-6 col-sm-12 padless" >
-                    <div class="row" >
-                        <div class="col-xs-12 col-sm-4" >
-                            <p:outputLabel value="Capital Prestado"/><br/>
-                            <p class="info">15,500.00</p>
-                        </div>
-
-                        <div class="col-xs-12 col-sm-4" >
-                            <p:outputLabel value="Ganancias"/><br/>
-                            <p class="info" >4,856.56</p>
-                        </div>
-
-                        <div class="col-xs-12 col-sm-4" >
-                            <p:outputLabel value="Plazo"/><br/>
-                            <p class="info" >12 MESES</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-xs-6 col-sm-12 padless" >
-                    <div class="row" >
-
-                        <div class="col-xs-12 col-sm-4" >
-                            <p:outputLabel value="Duración"/><br/>
-                            <p class="info" > 18.5 MESES</p>
-                        </div>
-
-                        <div class="col-xs-12 col-sm-4" >
-                            <p:outputLabel value="Fecha Inicio"/><br/>
-                            <p class="info" >01/01/2020</p>
-                        </div>
-
-                        <div class="col-xs-12 col-sm-4" >
-                            <p:outputLabel value="Fecha Final"/><br/>
-                            <p class="info" >05/06/2022</p>
-                        </div>
-                    </div> 
-                </div>
-
-            </div>
-
-            <div class="col-xs-12 col-sm-2 padless contBoton flexDisplay" >
-                <p:commandLink class="boton"
-                               title="Detalles"
-                               style="background-color: #0096c7">             
-                    <i class="pi pi-folder-open icon" ></i>
-                    <b class="abrirTexto" style="font-size: 1.4em;">Detalles</b>
-                </p:commandLink>
-            </div>
-        </div>
-    </div>
-
-
-
 
 
 </ui:composition>

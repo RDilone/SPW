@@ -35,8 +35,8 @@
         <!--# {cc.attrs.sak}-->
 
         <style >
-            
-            
+
+
 
             @media(max-width: 640px){
                 .colHidden {
@@ -57,7 +57,7 @@
             .ui-datatable-scrollable-theadclone {
                 visibility: collapse;
             }
-            
+
             @media(max-width: 767px){
                 .tableText {
                     font-size: 0.7em;
@@ -72,13 +72,19 @@
                   modal="true"
                   width="90%"
                   style="max-width: 900px;
-                         max-height: 600px;
-                         overflow-y: auto;"
+                  max-height: 600px;
+                  overflow-y: auto;"
                   position="center">
 
 
             <h:form id="formPagar" class="form-horizontal">
-                <div class="box-body" style="padding: 0px;">
+                <p:messages id="messagePagar" 
+                            showDetail="true" 
+                            showSummary="true"
+                            closable="true">
+                    <p:autoUpdate />
+                </p:messages>
+                <div class="row" style="padding: 0px;">
                     <div class="col-lg-12" >
                         <div class="row">
 
@@ -88,12 +94,12 @@
                                         <p:outputLabel for="@next" value="Nombre"  /><br/>
                                         <p>#{cc.attrs.nombreCliente}</p>
                                     </div>
-                                    
+
                                     <div class="col-lg-4" >
                                         <p:outputLabel for="@next" value="Balance Pendiente"  /><br/>
                                         <p>#{misPrestamosBean.formatMoney(cc.attrs.balancePendiente)}</p>
                                     </div>
-                                    
+
                                     <div class="col-lg-4" >
                                         <p:outputLabel for="@next" value="Cuota Num."  /><br/>
                                         <p>##{cc.attrs.cuotaNum}</p>
@@ -286,7 +292,7 @@
             $(document).ready(function () {
                 document.getElementById("capt").style.display = "none";
             });
-            
+
         </script>
 
     </composite:implementation>

@@ -526,7 +526,7 @@ public class MisPrestamosBean implements Serializable {
         
         boolean lastPaid = false;
         
-        if (amortizacionGeneralSeleccionada != null) {
+        if (listPago!= null && listPago.size() >= 1 && amortizacionGeneralSeleccionada != null) {
             
             if(checkBoxChanges){
                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia", "Primero debe Recalcular!");
@@ -598,6 +598,8 @@ public class MisPrestamosBean implements Serializable {
             
             PrimeFaces.current().executeScript("PF('r_pago').hide();");
             }
+        }else{
+            messagesBean.warnigId("Primero debe agregar al menos un pago!", "formPagar:messagePagar");
         }
     }
     
@@ -731,6 +733,7 @@ public class MisPrestamosBean implements Serializable {
         if (amortizacionTableSeleccionada != null) {
 
             NavigationBean.prestamoDetalle = amortizacionTableSeleccionada.getIdPrestamo();
+            NavigationBean.PRE_VENTANA = VENTANA;
             navigationBean.showPrestamo();
             detallePrestamoBean.fillFormPrestamo();
         }
