@@ -59,7 +59,9 @@ public class ReporteBean implements Serializable{
     
     //lista de rportes
     private List<CustomReporte> listCustomReporte;
-
+    private List<CustomReporte> listAnoCustomReporte;
+    private List<CustomReporte> listCelCustomReporte;
+    
     //listas de valores de rportes   
     private List<String> meses;
     private List<String> anos;
@@ -75,11 +77,20 @@ public class ReporteBean implements Serializable{
     //valor seleccionado temporal
     private String tempSelectedValue; 
     
+    private String anoSeleccionado;
+    
+    //variable para controlar el parametro 
+    //mostrar o no el celular del prestamista
+    private boolean mostrarCelular;
+    
     //posibles valores de fechas
     private Date fechaInicio;
     private Date fechaFinal;
+    
+    private Date fechaActual;
    
     private SimpleDateFormat sdf;
+    private SimpleDateFormat sdfYear;
     
     //servicios
     MessagesBean messagesBean;    
@@ -88,6 +99,7 @@ public class ReporteBean implements Serializable{
     private void init(){
         
         sdf = new SimpleDateFormat("dd/MM/yyyy");
+        sdfYear = new SimpleDateFormat("yyyy");
         
         //inicializando
         messagesBean = new MessagesBean();
@@ -102,6 +114,8 @@ public class ReporteBean implements Serializable{
         meses = new ArrayList<>();
         
         listCustomReporte = new ArrayList<>();
+        listAnoCustomReporte = new ArrayList<>();
+        listCelCustomReporte = new ArrayList<>();
         
         //llenando las listas de parametros de los reportes
         fillListValuesParameters();
@@ -113,12 +127,15 @@ public class ReporteBean implements Serializable{
       y sus posibles valores seleccionables */
     public void fillListValuesParameters(){
         
+        fechaActual = new Date();
+        
         tempSelectedValue = "";
+        anoSeleccionado = sdfYear.format(fechaActual);
+        mostrarCelular = true;
         
         //definiendo vlores de reportes
                
         //lista de meses
-        //meses.add("Seleccionar Mes"); 
         meses.add("ENERO");       
         meses.add("FEBRERO");
         meses.add("MARZO");
@@ -134,7 +151,8 @@ public class ReporteBean implements Serializable{
         
         //lista de años
         anos = prestamoFacade.getYearListPrestamos();
-        //anos.add(0, "Seleccionar Año");
+        anos.add("2021");
+        anos.add("2020");
         
         //agregando listas de posibles valores 
         
@@ -150,21 +168,32 @@ public class ReporteBean implements Serializable{
     }
     
     
-     /*verifica si hay parametros que comiencen con FECHA y devuelve la 
-      cantidad de parametros fecha que hay */
-    public boolean checkFecha(List<String> listParametros){
-        boolean exist = false;
-        
-        for (String param : listParametros) {
-            if(param.startsWith("FECHA")){
-                exist = true;
-            }
+//     /*verifica si hay parametros que comiencen con FECHA y devuelve la 
+//      cantidad de parametros fecha que hay */
+//    public boolean checkFecha(List<String> listParametros){
+//        boolean exist = false;
+//        
+//        for (String param : listParametros) {
+//            if(param.startsWith("FECHA")){
+//                exist = true;
+//            }
+//        }
+//        
+//        return exist;
+//    }
+    
+    
+    //cambia el texto del control de mostrar/ocultar celular 
+    public String getShowTextCelular(){
+        if(mostrarCelular){
+            return "Mostrar Celular";
+        }else {
+            return "Ocultar Celular";
         }
-        
-        return exist;
     }
     
     
+    //llena la lista de los objetos CustomReport
     public void fillCustomReportList(){
 
         File reportes = new File(FacesContext.getCurrentInstance().getExternalContext().getRealPath("/resources/reportes/"));
@@ -176,17 +205,26 @@ public class ReporteBean implements Serializable{
             List<String> listFechaParametros = new ArrayList<>();
             
             //asignando parametros correspondientes
-            for (Reporte report : reporteFacade.getReporteListByName(file.getName())) {
+            for (Reporte report : reporteFacade.getReporteListByName(file.getName())) {               
+                
                 if(report.getParametro().startsWith("FECHA")){
+                    //agrega los parametros de tipo FECHA a una lista distinta
                     listFechaParametros.add(report.getParametro());
+                }else if(report.getParametro().startsWith("ANO")) {
+                    //configura el parametro ANO y su valor correspondiente por defecto
+                    rep.getParametros().put(report.getParametro(), anoSeleccionado);
+                }else if(report.getParametro().startsWith("CEL")){
+                     //configura el parametro CEL y su valor correspondiente por defecto
+                    rep.getParametros().put(report.getParametro(), mostrarCelular ?  "SI" : "NO");
                 }else {
+                    //agrega los parametros de selectOneMenu a la lista
                     listParametros.add(report.getParametro());
-                }
+                }               
                 
             }
 
                         
-            //definiendo caracteristicas de cada reporte
+            //definiendo lista de valores de selectOneMenu de cada reporte
             switch(file.getName()){
                 case "toolbox.png": {
                     rep.setListValores(listvaluesReporte_x);                    
@@ -196,7 +234,7 @@ public class ReporteBean implements Serializable{
                     rep.setListValores(listvaluesReporte_y); 
                 } break;
                 
-                case "PES para cargar EJEMPLO.csv": {
+                case "Interrupciones 16-03-2022.xls": {
                     rep.setListValores(listvaluesReporte_b); 
                 } break; 
                 
@@ -206,17 +244,55 @@ public class ReporteBean implements Serializable{
             }
             
             
-                    rep.setListParametros(listParametros);
-                    rep.setListFechaParametros(listFechaParametros);
-                    rep.setReporte(file.getName());
-                    rep.setNombre(formatReportName(file.getName()));
+            rep.setListParametros(listParametros);
+            rep.setListFechaParametros(listFechaParametros);
+            rep.setReporte(file.getName());
+            rep.setNombre(formatReportName(file.getName()));
+
+
+            if(rep.getParametros().containsKey("ANO")){
+                listAnoCustomReporte.add(rep);
+            }
             
+            if(rep.getParametros().containsKey("CEL")){
+                listCelCustomReporte.add(rep);
+            }
+            
+            System.out.println("Reportes: " + rep.getReporte());
             listCustomReporte.add(rep);
         }
         
     } 
     
-
+    //configura el parametro y valor ano en cada uno de los 
+    //reportes que incluya un parametro ANO
+    public void setParameterAno() {
+        
+        for (CustomReporte customR : listAnoCustomReporte) {
+            listCustomReporte.get(listCustomReporte.indexOf(customR)).getParametros().replace("ANO", anoSeleccionado);
+            
+//            System.out.println(listCustomReporte.get(listCustomReporte.indexOf(customR)).getParametros());
+//            System.out.println("\n"); 
+        }
+        
+    }   
+    
+    //configura el parametro y valor ano en cada uno de los 
+    //reportes que incluya un parametro CEL
+    public void setParameterCel() {
+        
+        for (CustomReporte customR : listCelCustomReporte) {
+            listCustomReporte.get(listCustomReporte.indexOf(customR)).getParametros().replace("CEL", mostrarCelular ? "SI" : "NO");
+            
+//            System.out.println(listCustomReporte.get(listCustomReporte.indexOf(customR)).getParametros());
+//            System.out.println("\n");
+        }
+      
+    }
+    
+    //configura el parametro y valor ano en cada uno de los 
+    //reportes que incluya cualquier otro parametro que no 
+    //sea ANO o CEL
     public void setParameterValue(CustomReporte reporte, String parametro, String valor){
                       
             if(listCustomReporte.get(listCustomReporte.indexOf(reporte)).getParametros().containsKey(parametro)){
@@ -224,16 +300,20 @@ public class ReporteBean implements Serializable{
             }else {
                 listCustomReporte.get(listCustomReporte.indexOf(reporte)).getParametros().put(parametro, valor);
             }    
-
-//            System.out.println(
-//                        parametro +" - " + 
-//                        valor + " - " + 
-//                        listCustomReporte.get(listCustomReporte.indexOf(reporte)).getParametros());
-//
-//            System.out.println("\n");            
+            
+            System.out.println("Reporte: " + reporte.getReporte());
+            System.out.println(listCustomReporte.get(listCustomReporte.indexOf(reporte)).getParametros());
+            System.out.println("\n");            
      
     }
-    
+  
+    public String hideFirstReport(int index){
+        if(index <= 0){
+            return "none";
+        }else {
+            return "flex";
+        }
+    }
     
     
     //Formatea el nombre (del archivo) del reporte que se va a presentar
@@ -241,8 +321,7 @@ public class ReporteBean implements Serializable{
         return reporte.replace("_", " ").replace(".jasper", "");
     }
     
-    
-    
+  
     //construye el reporte y retorna el string correspondiente
     public String buildReport(CustomReporte reporte) throws SQLException, JRException {
               
@@ -343,6 +422,30 @@ public class ReporteBean implements Serializable{
 
     public void setSdf(SimpleDateFormat sdf) {
         this.sdf = sdf;
+    }
+
+    public boolean isMostrarCelular() {
+        return mostrarCelular;
+    }
+
+    public void setMostrarCelular(boolean mostrarCelular) {
+        this.mostrarCelular = mostrarCelular;
+    }
+
+    public List<String> getAnos() {
+        return anos;
+    }
+
+    public void setAnos(List<String> anos) {
+        this.anos = anos;
+    }
+
+    public String getAnoSeleccionado() {
+        return anoSeleccionado;
+    }
+
+    public void setAnoSeleccionado(String anoSeleccionado) {
+        this.anoSeleccionado = anoSeleccionado;
     }
     
     

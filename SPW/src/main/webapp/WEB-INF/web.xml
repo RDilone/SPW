@@ -5,7 +5,7 @@
                              http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
     <display-name>spw</display-name>
     
-<!--    <context-param>
+    <!--    <context-param>
         <param-name>primefaces.FONT_AWESOME</param-name>
         <param-value>true</param-value>
     </context-param>-->
@@ -31,6 +31,12 @@
         <param-name>javax.faces.VALIDATE_EMPTY_FIELDS</param-name>
         <param-value>true</param-value>
     </context-param>
+    
+<!--    <context-param>     
+        <param-name>primefaces.THEME</param-name>   
+        <param-value>nova-light</param-value> 
+    </context-param>-->
+    
     <servlet>
         <servlet-name>Faces Servlet</servlet-name>
         <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>

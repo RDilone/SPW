@@ -7,7 +7,6 @@
               xmlns:composite="http://java.sun.com/jsf/composite">
 
 
-
     <composite:interface>
 
         <composite:attribute name="reporte" type="entities.CustomReporte" />
@@ -24,7 +23,7 @@
 
         <p:outputPanel style="width: 100%;" >
 
-            <h:form id="genParameters" >
+<!--            <h:form id="genParameters" style="margin: 0px; padding: 0px;" >-->
                 <p:repeat value="#{cc.attrs.listValores}" var="rp" varStatus="spr" >
 
                     <div class="col-xs-12 padless" >
@@ -45,8 +44,8 @@
 
                     </div>
                 </p:repeat>
-
-                <br/>
+<!--
+                <br/>-->
 
                 <p:repeat value="#{cc.attrs.listFechaParametros}" var="fp" varStatus="fch" >
                     
@@ -68,7 +67,7 @@
 
                 </p:repeat>     
 
-            </h:form>
+            <!--</h:form>-->
         </p:outputPanel>
 
     </composite:implementation>

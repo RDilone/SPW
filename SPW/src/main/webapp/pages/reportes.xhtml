@@ -66,7 +66,7 @@
             margin-bottom: 0px;
             font-size: 1.3em;
         }
-        
+
         .newForm {
             font-family: 'Varela Round', sans-serif;
             display: flex;
@@ -246,59 +246,88 @@
 
     </style>
 
+    <h:form id="formReportes" >
 
-    <div class="col-xs-12" >
-        <div class="row" >
-            <div class="newForm" >
-                <div class="col-xs-12 col-sm-8" >
-                    <p class="titulo2" >
-                        <img height="50" style="margin-right: 10px;" src="resources/images/report.png" /> 
-                        Galería de Reportes
-                    </p>                                                
-                </div>
-                
-            </div>   
-        </div>
-    </div>
+        <div class="col-xs-12" >
+            <div class="row" >
+                <div class="newForm" >
+                    <div class="col-xs-12 col-sm-8" >
+                        <p class="titulo2" >
+                            <img height="50" style="margin-right: 10px;" src="resources/images/report.png" /> 
+                            Galería de Reportes
+                        </p>                                                
+                    </div>
 
+                    <div class="col-xs-6 col-sm-2" style="padding-top: 15px; padding-bottom: 10px;" >
+                        <p:outputLabel value="Año: " 
+                                       for="@next" 
+                                       style="margin-top: 6px; margin-right: 10px;"/>
+                        <p:selectOneMenu id="s_ano" value="#{reporteBean.anoSeleccionado}"  >
 
-    <p:repeat value="#{reporteBean.listCustomReporte}" var="rep" varStatus="spr" >
-        <div class="col-xs-12 col-md-6 col-lg-4 padleft" >
+                            <p:ajax event="change" listener="#{reporteBean.setParameterAno()}" update="s_ano" /> 
 
-            <div class="newForm motivo" >
-                <div class="col-xs-12 padless" >                   
-                    <p class="titulo3" >
-                        <img height="50" 
-                             style="margin-right: 10px;" 
-                             src="resources/images/report-default.png" /> 
-                        <span style="margin: auto 0px;">#{rep.nombre}</span>
-                    </p>
+                            <f:selectItems value="#{reporteBean.anos}"
+                                           var="sel"
+                                           itemValue="#{sel}" />
+                        </p:selectOneMenu>
+                    </div>
+
+                    <div class="col-xs-6 col-sm-2" style="padding-top: 15px; padding-bottom: 10px;" >
+                        <p:outputLabel id="celLabel" value="#{reporteBean.showTextCelular}" 
+                                       style="font-weight: 400;  
+                                       margin-right: 5px; 
+                                       margin-top: 2px; 
+                                       vertical-align: top;"/>
+                        <p:toggleSwitch value="#{reporteBean.mostrarCelular}" >
+                            <p:ajax event="change" 
+                                    listener="#{reporteBean.setParameterCel()}" 
+                                    update="celLabel" />
+                        </p:toggleSwitch>
+                    </div>
+
                 </div>   
-
-                <components:parametrosReporte 
-                    reporte="#{rep}"
-                    listValores="#{rep.listValores}"
-                    listFechaParametros="#{rep.listFechaParametros}" />
-
-                <br/>
-
-                <!--                action="# {reporteBean.printReport(rep)}"-->
-                <div class="col-xs-12 padless" >
-                    <p:commandLink id="addP" 
-                                   action="#{reporteBean.printReport(rep)}"
-                                   class="btn btn-primary" 
-                                   style="width: 100%;">           
-                        <i class="pi pi-print" ></i>
-                        <b>Generar</b>
-                    </p:commandLink>                    
-                </div>
-
-
-            </div>  
-
+            </div>
         </div>
-    </p:repeat>
 
+
+        <p:repeat value="#{reporteBean.listCustomReporte}" var="rep" varStatus="spr" >
+            <div class="col-xs-12 col-md-6 col-lg-4" 
+                 style="display: #{reporteBean.hideFirstReport(spr.index)}; min-height: 260px; margin-bottom: 10px;" >
+
+                <div class="newForm motivo" >
+                    <div class="col-xs-12 padless" >                   
+                        <p class="titulo3" >
+                            <img height="50" 
+                                 style="margin-right: 10px;" 
+                                 src="resources/images/report-default.png" /> 
+                            <span style="margin: auto 0px;">#{rep.nombre}</span>
+                        </p>
+                    </div>   
+
+                    <components:parametrosReporte 
+                        reporte="#{rep}"
+                        listValores="#{rep.listValores}"
+                        listFechaParametros="#{rep.listFechaParametros}" />
+
+                    <br/>
+
+                    <!--                action="# {reporteBean.printReport(rep)}"-->
+                    <div class="col-xs-12 padless" >
+                        <p:commandLink id="addP" 
+                                       action="#{reporteBean.printReport(rep)}"
+                                       class="btn btn-primary" 
+                                       style="width: 100%;">           
+                            <i class="pi pi-print" ></i>
+                            <b>Generar</b>
+                        </p:commandLink>                    
+                    </div>
+
+
+                </div>  
+
+            </div>
+        </p:repeat>
+    </h:form>
 
 </ui:composition>
 
