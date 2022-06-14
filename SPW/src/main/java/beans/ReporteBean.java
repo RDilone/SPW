@@ -215,7 +215,9 @@ public class ReporteBean implements Serializable{
                     rep.getParametros().put(report.getParametro(), anoSeleccionado);
                 }else if(report.getParametro().startsWith("CEL")){
                      //configura el parametro CEL y su valor correspondiente por defecto
-                    rep.getParametros().put(report.getParametro(), mostrarCelular ?  "SI" : "NO");
+                    rep.getParametros().put(report.getParametro(), (mostrarCelular ?  "SI" : "NO"));
+                }else if(report.getParametro().startsWith("ID_USUARIO")){
+                    rep.getParametros().put(report.getParametro(), NavigationBean.usuario.getIdUsuario()+"");               
                 }else {
                     //agrega los parametros de selectOneMenu a la lista
                     listParametros.add(report.getParametro());
@@ -223,24 +225,32 @@ public class ReporteBean implements Serializable{
                 
             }
 
-                        
+                     
             //definiendo lista de valores de selectOneMenu de cada reporte
             switch(file.getName()){
-                case "toolbox.png": {
-                    rep.setListValores(listvaluesReporte_x);                    
+                
+                /*
+                case "P.jasper": {
+                    listCustomReporte.add(rep);
+                } break; 
+                */
+                
+                case "Pagos_Pendientes.jasper": {
+                    //rep.setListValores(listvaluesReporte_x);  
+                    listCustomReporte.add(rep);
                 } break;
                 
-                case "MicrosoftTeams-image.png": {
-                    rep.setListValores(listvaluesReporte_y); 
+                case "Ganancias_Generadas.jasper": {
+                    //rep.setListValores(listvaluesReporte_y); 
+                    listCustomReporte.add(rep);
                 } break;
                 
-                case "Interrupciones 16-03-2022.xls": {
-                    rep.setListValores(listvaluesReporte_b); 
+                case "Reporte_General_Credito.jasper": {
+                    listCustomReporte.add(rep);
+                    //rep.setListValores(listvaluesReporte_b); 
                 } break; 
+                  
                 
-                case "JWSFileChooserDemo.jnlp": {
-                    rep.setListValores(listvaluesReporte_a); 
-                } break; 
             }
             
             
@@ -251,17 +261,23 @@ public class ReporteBean implements Serializable{
 
 
             if(rep.getParametros().containsKey("ANO")){
-                listAnoCustomReporte.add(rep);
+                listAnoCustomReporte.add(rep);                
             }
             
             if(rep.getParametros().containsKey("CEL")){
-                listCelCustomReporte.add(rep);
+                listCelCustomReporte.add(rep);               
             }
             
-            System.out.println("Reportes: " + rep.getReporte());
-            listCustomReporte.add(rep);
+            //System.out.println("Reportes: " + rep.getReporte());
+            //listCustomReporte.add(rep);
         }
         
+        setParameterCel();
+        setParameterAno();
+        
+        System.out.println("Usuario: "+NavigationBean.usuario.getIdUsuario());
+        System.out.println("ANO: "+ anoSeleccionado);
+        System.out.println("CEL: "+ (mostrarCelular ? "SI" : "NO"));
     } 
     
     //configura el parametro y valor ano en cada uno de los 
@@ -289,6 +305,9 @@ public class ReporteBean implements Serializable{
         }
       
     }
+    
+    //HAY UN PROBLEMA, SI NO SE EJECUTA ESTE METODO setParameterValue() PRIMERO, DA UN ERROR DE NULL 
+    
     
     //configura el parametro y valor ano en cada uno de los 
     //reportes que incluya cualquier otro parametro que no 
