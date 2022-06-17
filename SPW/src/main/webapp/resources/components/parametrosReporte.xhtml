@@ -12,8 +12,8 @@
         <composite:attribute name="reporte" type="entities.CustomReporte" />
         <composite:attribute name="listValores" type="java.util.List" />
         <composite:attribute name="listFechaParametros" type="java.util.List" />
-        <composite:attribute name="valorSeleccionado" /> 
-        <composite:attribute name="valorFechaSeleccionado" type="java.util.Date" /> 
+        <composite:attribute name="valorSeleccionado" default="" type="java.lang.String" /> 
+        <composite:attribute name="valorFechaSeleccionado" type="java.util.Date" default="#{reporteBean.fechaActual}" /> 
 
     </composite:interface>
 
@@ -25,37 +25,56 @@
 
 <!--            <h:form id="genParameters" style="margin: 0px; padding: 0px;" >-->
                 <p:repeat value="#{cc.attrs.listValores}" var="rp" varStatus="spr" >
-
+                    
+                    <!--NOTA IMPORTANTE: si al repeat no se le asigna un valor
+                        por defecto en cada uno de los valores de los parametros
+                        dara un error de null, esto es debido a que el repeat se 
+                        renderiza al principio y debe contar con todos los elementos
+                        para renderizarse bien.
+                    
+                        se puede pasarle un valor por defecto en las variables:
+                            - valorSeleccionado
+                            - valorFechaSeleccionado
+                    
+                        En el caso de los timePicker tiene que ser un objeto date.
+                        En el caso de los SelecOneMenu tiene que ser un elemento de
+                        la lista que le pasaste-->
+                    
                     <div class="col-xs-12 padless" >
-
+                                 
                         <!--converter="omnifaces.SelectItemsIndexConverter"-->
                         <p:selectOneMenu style="width: 100% !important;"
-                                         value="#{cc.attrs.valorSeleccionado}"  >
+                                         value="#{cc.attrs.valorSeleccionado}" >
 
                             <p:ajax event="change"
                                     listener="#{reporteBean.setParameterValue(cc.attrs.reporte, cc.attrs.reporte.listParametros.get(spr.index), cc.attrs.valorSeleccionado)}" />
 
+
                             <f:selectItem itemLabel="Seleccionar #{cc.attrs.reporte.listParametros.get(spr.index)}" itemValue="" />
 
                             <f:selectItems value="#{rp}"
-                                           var="sel"
+                                           var="sel" 
+                                           noSelectionValue=" "
                                            itemValue="#{sel}" />
                         </p:selectOneMenu>
-
+                                               
                     </div>
                 </p:repeat>
 <!--
                 <br/>-->
 
                 <p:repeat value="#{cc.attrs.listFechaParametros}" var="fp" varStatus="fch" >
-                    
+                                       
                     <div class="col-xs-12 padless"  >
                         <p:outputLabel for="@next" value="Fecha #{fch.index + 1}" /><br/>
                         <p:datePicker id="f_if"
                                       locale="es"
                                       value="#{cc.attrs.valorFechaSeleccionado}"
                                       inputStyleClass="fullSize"
-                                      readonlyInput="true"
+                                      readonlyInput="false"
+                                      yearNavigator="true"
+                                      mask="99/99/9999"
+                                      monthNavigator="true"
                                       pattern="dd/MM/yyyy"          
                                       showIcon="true"  >
                             

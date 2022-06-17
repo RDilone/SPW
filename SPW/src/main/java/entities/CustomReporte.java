@@ -23,7 +23,6 @@ public class CustomReporte {
     private List<String> listParametros;
     private List<List<String>> listValores;
     private List<String> listFechaParametros;
-    private List<String> listFechaValores;
     
     private SimpleDateFormat sdf;
     
@@ -35,7 +34,6 @@ public class CustomReporte {
         listValores = new ArrayList<>();
         listParametros = new ArrayList<>();
         listFechaParametros = new ArrayList<>();
-        listFechaValores = new ArrayList<>();
         parametros = new HashMap();
     }
     
@@ -89,14 +87,6 @@ public class CustomReporte {
 
     public void setListFechaParametros(List<String> listFechaParametros) {
         this.listFechaParametros = listFechaParametros;
-    }
-
-    public List<String> getListFechaValores() {
-        return listFechaValores;
-    }
-
-    public void setListFechaValores(List<String> listFechaValores) {
-        this.listFechaValores = listFechaValores;
     }
 
     
