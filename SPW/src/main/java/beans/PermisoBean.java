@@ -61,7 +61,7 @@ public class PermisoBean implements Serializable{
     }
     
     public void fillListPermiso(){
-        listPermiso = permisoFacade.findAll();
+        listPermiso = permisoFacade.findAll(NavigationBean.DEFAULT_USER);
         cleanFields();
     }
     

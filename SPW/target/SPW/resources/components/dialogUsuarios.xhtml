@@ -50,7 +50,13 @@
                                          class="pull-left"
                                          style="width: 100%; 
                                          margin-bottom: 15px;" 
-                                         placeholder="Usuario"/>          
+                                         placeholder="Usuario">
+                            
+                                <p:ajax event="blur" 
+                                        listener="#{usuarioBean.setSchemaName()}" 
+                                        update="esq" />
+                                
+                            </p:inputText>          
                         </div>
 
                         <div class="col-lg-4">
@@ -74,6 +80,7 @@
                             <p:outputLabel for="@next" value="Esquema:"/><br/>
                             <p:inputText value="#{cc.attrs.esquema}" 
                                          id="esq" 
+                                         readonly="true"
                                          requiredMessage="Esquema: debe tener al menos 3 caracteres"
                                          required="true"
                                          class="pull-left"

@@ -151,7 +151,11 @@
                         update="tablaUsuarios" 
                         icon="pi pi-trash" >
                 <p:confirm header="Confirmación" 
-                           message="Está seguro que desea eliminar este Usuario?" 
+                           message="Estás seguro que deseas eliminar este Usuario?
+                                    Se eliminarán el esquema y todas las tablas con
+                                    sus datos! - 
+                                    [SE RECOMIENDA HACER PREVIAMENTE UN BACKUP DEL ESQUEMA: 
+                                    sch_#{usuarioBean.usuarioSeleccionado.usuario.toLowerCase()}]" 
                            icon="pi pi-info-circle" />
             </p:menuitem>
             

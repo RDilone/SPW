@@ -5,6 +5,7 @@
  */
 package sessions;
 
+import beans.NavigationBean;
 import entities.Perfil;
 import entities.Usuario;
 import java.util.List;
@@ -23,10 +24,19 @@ public class PerfilFacade extends AbstractFacade<Perfil> {
     }
  
     public void removePerfilByUsuario(Usuario usuario){
-        Query query = getEntityManager()
+        Query query = getEntityManager(NavigationBean.DEFAULT_USER)
                 .createQuery("delete from Perfil p where p.idUsuario = :user")
                 .setParameter("user", usuario);
         
         query.executeUpdate();
+    }
+    
+    public List<Perfil> getPerfilByUsuario(Usuario user){
+        Query query = getEntityManager(NavigationBean.DEFAULT_USER)
+                .createQuery("select p from Perfil p "
+                           + "where p.idUsuario = :user")
+                .setParameter("user", user);
+        
+        return (List<Perfil>) query.getResultList();
     }
 }

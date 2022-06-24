@@ -13,6 +13,7 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
 import javax.inject.Named;
 import org.primefaces.PrimeFaces;
 import services.EncryptMD5;
@@ -31,10 +32,15 @@ public class UsuarioBean implements Serializable{
     
     @EJB
     UsuarioFacade usuarioFacade;
+ 
     @EJB
     PermisoFacade permisoFacade;
+    
     @EJB
     PerfilFacade perfilFacade;
+    
+    @Inject
+    NavigationBean navigationBean;
     
     //listas
     private List<Usuario> listUsuario;
@@ -93,7 +99,7 @@ public class UsuarioBean implements Serializable{
 //    }
     
     public void fillListPermisoDisponibles(){
-        listPermisoDisponibles = permisoFacade.findAll();
+        listPermisoDisponibles = permisoFacade.findAll(NavigationBean.DEFAULT_USER);
     }
 
     
@@ -104,7 +110,7 @@ public class UsuarioBean implements Serializable{
     }
     
     public void fillListUsuario(){
-        listUsuario = usuarioFacade.findAll();
+        listUsuario = usuarioFacade.findAll(NavigationBean.DEFAULT_USER);
         cleanFields();
     }
     
@@ -161,8 +167,14 @@ public class UsuarioBean implements Serializable{
             newUsuario.setCorreo(correo.toLowerCase());
             newUsuario.setCelular(celular);
             
+            //creando el usuario
             usuarioFacade.create(newUsuario);
+            
+            //generando esquema, tablas y datos por defecto
+            navigationBean.generateNewSchema(usuario.toLowerCase());
+            
             messagesBean.info("Usuario Creado!");
+            messagesBean.info("Esquema generado satisfactoriamente");
             PrimeFaces.current().executeScript("PF('dialogUsuario').hide();");
             fillListUsuario();
         }else {
@@ -213,7 +225,9 @@ public class UsuarioBean implements Serializable{
     public boolean removeUsuario(){
         if(usuarioSeleccionado != null){
             usuarioFacade.remove(usuarioSeleccionado.getIdUsuario());
+            navigationBean.dropSchemaUser(usuarioSeleccionado.getUsuario().toLowerCase());
             messagesBean.info("Usuario eliminado!");
+            messagesBean.info("Esquema de usuario eliminado!");
             fillListUsuario();
             return true;
         }else {
@@ -245,7 +259,12 @@ public class UsuarioBean implements Serializable{
     }
     
     
-    
+    //genera el nombre que tendra el esquema
+    //del usuario, no se puede editar manualmente
+    public void setSchemaName(){
+        esquema = "sch_" + usuario;
+    }
+
     //GETTERS AND SETTERS
 
     public List<Usuario> getListUsuario() {

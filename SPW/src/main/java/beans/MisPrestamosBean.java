@@ -162,8 +162,13 @@ public class MisPrestamosBean implements Serializable {
         fillCheckListColumnas();
         startVisibleColumns();
         updateVisibleColumns();
-
-        amortizacionGridSeleccionada = listAmortizacion.get(0);
+        
+        //la amortizacion seleccionada en vista de tarjetas debe 
+        //comenzar con un valor por defecto
+        if(listAmortizacion.size() > 0){
+            amortizacionGridSeleccionada = listAmortizacion.get(0);
+        }
+        
     }
 
     public void fillFormPagar() {
@@ -794,6 +799,22 @@ public class MisPrestamosBean implements Serializable {
             return false;
         }
     }
+    
+    //devuelve none o block segun la listaAmortizacion 
+    //tenga o no registros
+    public String getDisplay(){
+        if(listAmortizacion.size() > 0){
+            return "none";
+        }else {
+            if(!viewMode){
+                return "block";
+            }else {
+                return "none";
+            }
+            
+        }
+    }
+    
 
     //GETTERS AND SETTERS
 

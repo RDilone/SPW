@@ -8,6 +8,7 @@
 
     <composite:interface>
         <composite:attribute name="listHistorialPago" type="java.util.List" /> 
+        <composite:attribute name="printHistorialPago" method-signature="void listener()" /> 
     </composite:interface>
 
     <composite:implementation>
@@ -50,11 +51,11 @@
             .ui-datatable-scrollable-theadclone {
                 visibility: collapse;
             }
-            
+
             .alignItems {
                 vertical-align: top;
             }
-            
+
             @media(max-width: 767px){
                 .tableText {
                     font-size: 0.7em;
@@ -68,8 +69,8 @@
                   modal="true" 
                   width="90%"
                   style="max-width: 1200px;
-                         max-height: 600px;
-                         overflow-y: auto;"
+                  max-height: 600px;
+                  overflow-y: auto;"
                   position="center" >
 
 
@@ -91,7 +92,7 @@
                                 <p:column headerText="Número de Cuota" >
                                     <h:outputText value="#{amo.cuotaNum}" />
                                 </p:column>
-                                
+
                                 <p:column headerText="Pago Capital" >
                                     <h:outputText value="#{amo.capital}" >
                                         <f:convertNumber pattern="###,###,###,###.##" locale="es_DO"/>
@@ -103,7 +104,7 @@
                                         <f:convertNumber pattern="###,###,###,###.##" locale="es_DO"/>
                                     </h:outputText>
                                 </p:column>
-                          
+
                                 <p:column headerText="Cargo por Mora" responsivePriority="6" >
                                     <h:outputText value="#{amo.cargoMora}" >
                                         <f:convertNumber pattern="###,###,###,###.##" locale="es_DO"/>
@@ -119,7 +120,7 @@
                                 <p:column headerText="Nota de Pago" responsivePriority="2" >
                                     <h:outputText value="#{amo.notaPago}" />
                                 </p:column>
-                                
+
                                 <p:columnGroup type="footer" >
                                     <p:row style="font-size: 12px;">
                                         <!-- Area de totales:
@@ -142,11 +143,11 @@
                                                   style="font-weight: bold;"
                                                   responsivePriority="6" 
                                                   class="tableText" />
-                                                                             
+
                                         <p:column footerText="" />
-                                        
+
                                         <p:column footerText="" />
-                                         
+
                                     </p:row>
                                 </p:columnGroup>
 
@@ -162,6 +163,17 @@
 
                 <div class="row" style="padding-right: 5px;">
 
+                    <div class="col-lg-2 col-md-3 col-sm-6 col-xs-12 pull-right" >
+                        <p:commandLink class="btn btn-primary" 
+                                       target="_blank"
+                                       style="width: 100%; margin-bottom: 15px;" 
+                                       action="#{cc.attrs.printHistorialPago}"
+                                       ajax="false"
+                                       onclick="PF('t_hist').hide();" >
+                            <i class="pi pi-print" style="padding-right: 5px;" ></i>
+                            <b>Imprimir</b>
+                        </p:commandLink>
+                    </div>
 
                     <div class="col-lg-2 col-md-3 col-sm-6 col-xs-12 pull-right" >
                         <p:commandLink class="btn btn-danger" 

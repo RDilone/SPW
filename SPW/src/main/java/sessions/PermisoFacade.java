@@ -5,6 +5,7 @@
  */
 package sessions;
 
+import beans.NavigationBean;
 import entities.Permiso;
 import entities.Usuario;
 import java.util.List;
@@ -23,8 +24,9 @@ public class PermisoFacade extends AbstractFacade<Permiso> {
     }
     
      public List<Permiso> listPerfilByUsuario(Usuario usuario){
-        Query query = getEntityManager()
-                .createQuery("select pm from Permiso pm, Perfil pf where pm.idPermiso = pf.idPermiso and pf.idUsuario = :user")
+        Query query = getEntityManager(NavigationBean.DEFAULT_USER)
+                .createQuery("select pm from Permiso pm, Perfil pf "
+                           + "where pm.idPermiso = pf.idPermiso and pf.idUsuario = :user")
                 .setParameter("user", usuario);
         
         return (List<Permiso>) query.getResultList();

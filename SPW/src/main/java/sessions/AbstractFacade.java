@@ -35,11 +35,20 @@ public abstract class AbstractFacade<T> {
         
         
     } 
+    
+    public EntityManager getEntityManager(String customUser){
+        
+        //System.out.println("Usuario logueado: " + customUser);
+        SessionFactoryImplementor sfi = emf.unwrap(SessionFactoryImplementor.class);
+        MuiltitenancyResolver tenantResolver = (MuiltitenancyResolver) sfi.getCurrentTenantIdentifierResolver();
+        tenantResolver.setTenantIdentifier(customUser);
+        return emf.createEntityManager();
+    }
   
     
     public EntityManager getEntityManager(){
         
-        System.out.println("Usuario logueado: " + NavigationBean.loggedUser);
+        //System.out.println("Usuario logueado: " + NavigationBean.loggedUser);
         SessionFactoryImplementor sfi = emf.unwrap(SessionFactoryImplementor.class);
         MuiltitenancyResolver tenantResolver = (MuiltitenancyResolver) sfi.getCurrentTenantIdentifierResolver();
         tenantResolver.setTenantIdentifier(NavigationBean.loggedUser);
@@ -77,6 +86,12 @@ public abstract class AbstractFacade<T> {
         javax.persistence.criteria.CriteriaQuery cq = getEntityManager().getCriteriaBuilder().createQuery();
         cq.select(cq.from(entityClass));
         return getEntityManager().createQuery(cq).getResultList();
+    }
+    
+    public List<T> findAll(String customUser) {
+        javax.persistence.criteria.CriteriaQuery cq = getEntityManager(customUser).getCriteriaBuilder().createQuery();
+        cq.select(cq.from(entityClass));
+        return getEntityManager(customUser).createQuery(cq).getResultList();
     }
 
     public List<T> findRange(int[] range) {

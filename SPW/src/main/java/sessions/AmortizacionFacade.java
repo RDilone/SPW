@@ -34,7 +34,7 @@ public class AmortizacionFacade extends AbstractFacade<Amortizacion> {
                
         Query query = getEntityManager().createNativeQuery("select * from Amortizacion a where "
                 + "cuota_num = (select min(cuota_num) from amortizacion where "
-                + "id_prestamo = a.id_prestamo and estado = 'PENDIENTE') order by a.fecha asc",Amortizacion.class);
+                + "id_prestamo = a.id_prestamo and estado = 'PENDIENT') order by a.fecha asc",Amortizacion.class);
         return (List<Amortizacion>) query.getResultList();
     }
     

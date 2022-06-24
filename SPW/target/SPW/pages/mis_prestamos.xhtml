@@ -59,6 +59,8 @@
             margin-bottom: 0px;
             font-size: 1.2em;
         }
+        
+        
 
         .newForm {
             font-family: 'Varela Round', sans-serif;
@@ -135,10 +137,10 @@
             font-weight: bold;
             display: none;
         }
-        
+
 
         @media(max-width: 767px) {
-            
+
             .tableText {
                 font-size: 0.7em;
             }
@@ -151,13 +153,35 @@
         }
 
 
+        .emptyCenter {  
+            width: 100%;
+            margin-top: 10%;
+            height: 80px;
+            display: flex;
+            justify-content: center;
+        }
+        
+        
+        .titulo3 {
+            font-family: 'Varela Round', sans-serif;
+            font-weight: 500;
+            font-size: 1.5em;
+            color: #6c757d;
+        }
+        
+        .folder {
+            margin-left: 20px;
+            margin-bottom: 10px;
+            opacity: 0.5;
+        }
+
 
     </style>    
-    
-    
+
+
     <h:form id="formMisPrestamos" class="form-horizontal">
         <p:focus for="buscar" context="formMisPrestamos"/>
-        
+
         <div class="col-xs-12" >
 
             <div class="col-xs-12 head"  >
@@ -167,37 +191,37 @@
                         <p class="titulo2" >
                             <img height="50" 
                                  style="margin-right: 10px; 
-                                        margin-bottom: 10px;" 
+                                 margin-bottom: 10px;" 
                                  src="resources/images/loan.png" /> 
                             Mis Préstamos 
-                            
+
                         </p>
                         <p style="display: flex; 
-                                  position: relative; 
-                                  top: -15px; 
-                                  left: 66px; 
-                                  margin: 0px;">
+                           position: relative; 
+                           top: -15px; 
+                           left: 66px; 
+                           margin: 0px;">
                             Pagos pendientes</p>
                     </div>
 
                     <div class="col-xs-6 col-md-4 col-lg-2" style="padding-top: 25px; padding-bottom: 10px;" >
                         <p:outputLabel value="#{misPrestamosBean.updateViewText()}" 
                                        style="font-weight: 400; 
-                                              margin-right: 5px; 
-                                              margin-top: 2px; 
-                                              vertical-align: top;"/>
+                                       margin-right: 5px; 
+                                       margin-top: 2px; 
+                                       vertical-align: top;"/>
                         <p:toggleSwitch value="#{misPrestamosBean.viewMode}" >
                             <p:ajax event="change" update="formMisPrestamos" />
                         </p:toggleSwitch>
                     </div>
-                    
-                    
+
+
                     <div class="col-xs-6 col-md-3 col-lg-2" style="padding-top: 25px; padding-bottom: 10px;" >
                         <p:outputLabel value="#{misPrestamosBean.updateOrderText()}" 
                                        style="font-weight: 400;  
-                                              margin-right: 5px; 
-                                              margin-top: 2px; 
-                                              vertical-align: top;"/>
+                                       margin-right: 5px; 
+                                       margin-top: 2px; 
+                                       vertical-align: top;"/>
                         <p:toggleSwitch value="#{misPrestamosBean.orderMode}" >
                             <p:ajax event="change" 
                                     listener="#{misPrestamosBean.revertListAmortizacion()}" 
@@ -206,8 +230,8 @@
                     </div>
 
                     <div class="col-xs-12 col-lg-4" style="padding-top: 15px;" >
-                        
-                        
+
+
                         <p:remoteCommand name="test" 
                                          action="#{misPrestamosBean.updateListAmortizacion()}" 
                                          update="@([id$=formMisPrestamos])"/>
@@ -227,9 +251,12 @@
 
             <!--Vista de tarjetas-->
 
+            <!--rendered="# {!misPrestamosBean.viewMode}"--> 
+
             <p:repeat id="gridList" 
-                      value="#{misPrestamosBean.listAmortizacion}" 
-                      rendered="#{!misPrestamosBean.viewMode}" var="amor">
+                      rendered="#{!misPrestamosBean.viewMode  and misPrestamosBean.listAmortizacion.size() > 0}" 
+                      value="#{misPrestamosBean.listAmortizacion}"                        
+                      var="amor" >
 
                 <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" style="margin-bottom: 20px;"  >
                     <div class="row" style="display: flex; justify-content: center;" >
@@ -239,7 +266,7 @@
                                     <p:commandLink  update="formMisPrestamos principal"
                                                     action="#{misPrestamosBean.detailGridAmortizacionPrestamo()}"
                                                     actionListener="#{misPrestamosBean.setAmortizacionGridSeleccionada(amor)}" >
-                                        
+
                                         <p:graphicImage value="#{misPrestamosBean.downloadFile(amor.idPrestamo.idPersona.fotoCedula)}" 
                                                         stream="false"
                                                         class="image" /> 
@@ -282,10 +309,18 @@
                     </div>
                 </div>
 
-            </p:repeat>
+            </p:repeat>      
 
-
-
+            <div class="col-xs-12" style="display: #{misPrestamosBean.display};" >
+                <p:outputPanel class="emptyCenter " >
+                    
+                    <h2 class="titulo3">Nada por aquí todavía...
+                        <img height="40" 
+                             class="folder" 
+                             src="resources/images/folder.png" />
+                    </h2>          
+                </p:outputPanel>
+            </div>
             <!--Vista de tabla-->
 
             <div class="newForm" style="display: #{misPrestamosBean.displayMode}; background-image: none;" >
@@ -311,7 +346,7 @@
                                 actionListener="#{misPrestamosBean.fillCheckListColumnas()}"
                                 icon="pi pi-table"/>
                 </p:contextMenu>
-                
+
                 <p:dataTable var="amort"
                              tableStyleClass="tableText"
                              id="tablaMisPrestamos"
@@ -383,7 +418,7 @@
                     <f:facet name="footer">Cantidad de registros: [ #{misPrestamosBean.listAmortizacion.size()} ]</f:facet>
                 </p:dataTable>
 
-                
+
             </div>
         </div>
     </h:form>

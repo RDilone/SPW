@@ -185,15 +185,20 @@
                                 <p:toggleSwitch value="#{cc.attrs.enviarCorreo}" style="margin-right: 20px;" />
                                 
                                 <p:outputLabel  value="Imprimir PDF" style="margin-right: 5px;"/>
-                                <p:toggleSwitch value="#{cc.attrs.imprimirPdf}" />
+                                <p:toggleSwitch id="print" value="#{cc.attrs.imprimirPdf}" >
+                                    <p:ajax event="change" update="send" />
+                                </p:toggleSwitch>
                             </h:panelGrid>
                         </div>
 
 
                         <div class="col-lg-2 col-md-3 col-sm-6 col-xs-12 pull-right" >
                             <p:commandLink class="btn btn-primary" 
+                                           id="send"
+                                           target="#{detallePrestamoBean.imprimirPdf ? '_blank' : ''}"
                                            style="width: 100%; margin-bottom: 15px;" 
                                            action="#{cc.attrs.executeActions}"
+                                           ajax="false"
                                            onclick="PF('t_amo_edit').hide();" >
                                 <i class="pi pi-send" style="padding-right: 5px;" ></i>
                                 <b>Enviar</b>

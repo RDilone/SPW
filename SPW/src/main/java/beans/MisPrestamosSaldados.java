@@ -202,6 +202,18 @@ public class MisPrestamosSaldados implements Serializable{
         
     }
     
+    
+    //devuelve none o block segun la listaAmortizacion 
+    //tenga o no registros
+    public String getDisplay(){
+        if(listPrestamos.size() > 0){
+            return "none";
+        }else {
+            return "block";  
+        }
+    }
+    
+    
     //SETTERS & GETTERS
 
     public String getBuscarPrestamo() {

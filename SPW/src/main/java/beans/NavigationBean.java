@@ -6,25 +6,55 @@
 package beans;
 
 import entities.Amortizacion;
+import entities.CustomReporte;
 import entities.HistorialPrestamo;
+import entities.Perfil;
+import entities.Permiso;
 import entities.Prestamo;
 import entities.Usuario;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Serializable;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.util.JRLoader;
+import org.apache.commons.text.StringSubstitutor;
+import org.apache.log4j.BasicConfigurator;
 import org.primefaces.event.FlowEvent;
 import services.EncryptMD5;
 import services.SchemaTenantResolver;
 import sessions.HistorialPrestamoFacade;
+import sessions.PerfilFacade;
+import sessions.PermisoFacade;
 import sessions.UsuarioFacade;
 
 //import org.primefaces.context.RequestContext;
@@ -39,16 +69,28 @@ import sessions.UsuarioFacade;
 @SessionScoped
 public class NavigationBean implements Serializable {
 
+    
+    @EJB
+    private HistorialPrestamoFacade historialPrestamoFacade;
+    
+    @EJB
+    private PermisoFacade permisoFacade;
+            
+    @EJB
+    private PerfilFacade perfilFacade;
+    
+    @Inject
+    private NuevoPrestamoBean nuevoPrestamoBean;
+
+    
     private static final long serialVersionUID = 1L;
     private String contenido;
 
     private MessagesBean messagesBean;
     
-    @EJB
-    HistorialPrestamoFacade historialPrestamoFacade;
-    
-    @Inject
-    private NuevoPrestamoBean nuevoPrestamoBean;
+    //db objects
+    @Resource(name = "jdbc/dspw", lookup = "jdbc/dspw")
+    private DataSource dataSource;
 
     private String redirect;
     private String opcion;
@@ -58,9 +100,15 @@ public class NavigationBean implements Serializable {
     private String user;
     private String pass;
     public static Usuario usuario;
+    public static Usuario mainUsuario;
     
     //prestamo a detallar
     public static Prestamo prestamoDetalle;
+    
+    //perfil del usuario
+    private List<Perfil> listPerfil;
+    
+    private HashMap perfilUsuario; 
     
     //control para cuando se vaya a refinanciar
     public static boolean refinanciar = false;
@@ -71,7 +119,8 @@ public class NavigationBean implements Serializable {
     //lista de usuarios (esquema: public) 
     public static List<Usuario> defaultUserList;
     
-    //control pre-ventana 
+    //control pre-ventana (la ventana que le 
+    //precede a la que se acaba de abrir)
     public static String PRE_VENTANA;
     
     //default tab MisPrestamos
@@ -91,7 +140,7 @@ public class NavigationBean implements Serializable {
 
     //constantes
     private static final int MIN_DIGITS_PASSWORD = 4;
-    private static final String DEFAULT_USER = "JODILONE";
+    public static final String DEFAULT_USER = "JODILONE";
 
     @EJB
     private UsuarioFacade usuarioFacade;
@@ -104,6 +153,8 @@ public class NavigationBean implements Serializable {
         fechaActual = new Date();
         sdf = new SimpleDateFormat("dd/MM/yyyy");
         fecha = sdf.format(fechaActual);        
+        perfilUsuario = new HashMap();
+        
         
         redirect = "?faces-redirect=true";
         contenido = "/pages/welcome.xhtml";
@@ -113,18 +164,182 @@ public class NavigationBean implements Serializable {
 
         messagesBean = new MessagesBean();
 
+        //loggedUser = "LUISG";
         loggedUser = DEFAULT_USER;
+        
+        //usuario normal
         usuario = usuarioFacade.findUsuarioByUser(loggedUser);
         
+        //usuario principal
+        mainUsuario = usuarioFacade.findUsuarioByUser(DEFAULT_USER);
         
         cleanFields();
         fillListEventosPrestamo();
         fillMapUserList();
-        fillDefaultUserList();
-
-        //luego de aqui se trabajara con los datos del usuario que se loguee...
+        loadPerfilUsuario();
         
+        System.out.println("perfil de " + usuario.getUsuario() + ": \n " + perfilUsuario);
+        
+        //FUNCIONA LO DE INICIAR LA APLICACION CON OTRO USUARIO
     }
+    
+    
+    /*Crea un esquema en base al nombre del parametro
+      user y las tablas que usara */
+    public void generateNewSchema(String user){
+        
+        HashMap<String, String> userParam = new HashMap<>();
+        userParam.put("user", user);
+        
+        StringSubstitutor sub = new StringSubstitutor(userParam);
+        
+        /*
+         archivo generate_schema_user.sql contiene las sentencias 
+         necesarias para crear un nuevo esquema y todas las tablas
+         en que el usuario almacenara sus datos, automaticamente y 
+         desde que comience a utilizar la aplicacion.*/
+        String sql = getSQL("/resources/sql/generate_schema_user.sql");
+        
+        usuarioFacade.executeSQL(sub.replace(sql));
+    }
+    
+    
+    //elimina el esquema y todas las tablas dentro de el 
+    //SI el esquema exis    te
+    public void dropSchemaUser(String user){
+        if(usuarioFacade.checkSchemaExist(user)){
+            String drop = "drop schema sch_"+user + " cascade;";    
+            usuarioFacade.executeSQL(drop);
+        }       
+    }
+    
+    
+     //construye el reporte y retorna el byte[] del reporte pdf construido
+    public byte[] getByteReport(CustomReporte reporte) throws SQLException, JRException {
+        
+        byte[] byteReport = null;
+        
+        String reportName = reporte.getReporte().substring(0, reporte.getReporte().length() - 7);
+
+        try( Connection con = dataSource.getConnection() ) {
+
+            FacesContext fc = FacesContext.getCurrentInstance();            
+            ExternalContext ec = fc.getExternalContext();            
+            HttpServletResponse res = (HttpServletResponse) fc.getExternalContext().getResponse();
+
+            BasicConfigurator.configure();          
+            
+            res.setContentType("application/pdf");//inline
+            res.addHeader("Content-disposition", "inline; filename="+reportName+".pdf");          
+            
+            File file = new File(ec.getRealPath("/resources/reportes/"+reporte.getReporte()));                         
+            
+            JasperReport rep = (JasperReport) JRLoader.loadObject(file);                                      
+            
+            JasperPrint jPrint = JasperFillManager.fillReport(rep, reporte.getParametros(), con);
+            
+            byteReport = JasperExportManager.exportReportToPdf(jPrint);
+             
+
+        } catch (JRException | SQLException e) {
+            System.out.println("Error de Reporte: "+e.getMessage());
+            System.out.println("Causa: "+e.getCause());
+            e.getLocalizedMessage();
+            e.printStackTrace();
+        }
+        
+        return byteReport;
+    }
+    
+    
+     //construye el reporte y retorna el string correspondiente
+    public String buildReport(CustomReporte reporte) throws SQLException, JRException {
+
+        String reportName = reporte.getReporte().substring(0, reporte.getReporte().length() - 7);
+
+//        System.out.println("datos de reporte: ");
+//        System.out.println("Maps: " + reporte.getParametros());
+//        System.out.println("Reporte: " + reporte.getReporte());
+//        System.out.println("List parametros: " + reporte.getListParametros().size());
+//        System.out.println("List fechaParametros: " + reporte.getListFechaParametros().size());
+//        System.out.println("-----------------------------------------------");
+        
+        try( Connection con = dataSource.getConnection() ) {
+
+            FacesContext fc = FacesContext.getCurrentInstance();            
+            ExternalContext ec = fc.getExternalContext();            
+            HttpServletResponse res = (HttpServletResponse) fc.getExternalContext().getResponse();
+
+            BasicConfigurator.configure();          
+            
+            res.setContentType("application/pdf");//inline
+            res.addHeader("Content-disposition", "inline; filename="+reportName+".pdf");          
+            
+            File file = new File(ec.getRealPath("/resources/reportes/"+reporte.getReporte()));                         
+            
+            JasperReport rep = (JasperReport) JRLoader.loadObject(file);                                      
+            
+            JasperPrint jPrint = JasperFillManager.fillReport(rep, reporte.getParametros(), con);
+            
+            
+            try (ServletOutputStream servletOutputStream = res.getOutputStream()) {
+                JasperExportManager.exportReportToPdfStream(jPrint, servletOutputStream);                
+                servletOutputStream.flush();
+            }
+            FacesContext.getCurrentInstance().responseComplete();
+
+        } catch (JRException | IOException e) {
+            System.out.println("Error de Reporte: "+e.getMessage());
+            System.out.println("Causa: "+e.getCause());
+            e.getLocalizedMessage();
+            e.printStackTrace();
+        }
+        return reportName;
+    }
+
+    
+    //devuelve el string del reporte correspondiente al parametro reporte
+    //genera el reporte en una pestaña nueva
+    public String printReport(CustomReporte reporte) {
+                      
+        try {
+            return buildReport(reporte);
+        } catch (SQLException ex) {
+            Logger.getLogger(ReporteBean.class.getName()).log(Level.SEVERE, null, ex);
+            return "Error al Generar el archivo";
+        } catch (JRException ex) {
+            Logger.getLogger(ReporteBean.class.getName()).log(Level.SEVERE, null, ex);
+            return "Error al Generar el archivo";
+        }
+    }
+
+    //llena la lista de perfil de usuario en el objeto listPerfil
+    public void fillListPerfilUsuario(Usuario user){
+        listPerfil = perfilFacade.getPerfilByUsuario(user);
+    }
+    
+    //define el map que tendra el perfil completo del usuario
+    public void loadPerfilUsuario(){
+        
+        fillListPerfilUsuario(usuario);
+        
+        for (Permiso permiso : permisoFacade.findAll(DEFAULT_USER)) {
+            Optional<Perfil> per = listPerfil
+                    .stream()
+                    .parallel()
+                    .filter(Perfil -> Perfil
+                            .getIdPermiso()
+                            .equals(permiso))
+                    .findAny();
+            
+            if(per.isPresent()){
+                perfilUsuario.put(permiso.getPermiso(), true);
+            }else {
+                perfilUsuario.put(permiso.getPermiso(), false);
+            }
+        }
+    }
+    
 
     //llena la lista de posibles descripciones de actualizaciones y eventos de un prestamo
     public void fillListEventosPrestamo(){
@@ -141,16 +356,18 @@ public class NavigationBean implements Serializable {
         listEventosPrestamo.add("Eliminando archivos: ");
     }
     
-    public void fillDefaultUserList(){
-        defaultUserList = usuarioFacade.findAll();
-    }
+    //llena la lista por defecto de todos los usuarios. 
+//    public void fillDefaultUserList(){
+//        defaultUserList = usuarioFacade.findAll(DEFAULT_USER);
+//    }
     
     
+    //loguea la aplicacion con el usuario y contraseña
     public String login(){
         usuario = new Usuario();
         boolean exist = false;
         
-        for (Usuario us : usuarioFacade.findAll()) {
+        for (Usuario us : usuarioFacade.findAll(DEFAULT_USER)) {
             if(us.getNombre().equals(user)){
                 exist = true;
                 usuario = us;
@@ -309,17 +526,57 @@ public class NavigationBean implements Serializable {
 
     }
 
+    /*llena la lista de Maps del schemaTenantResolver que es 
+      quien define la conexion a la base de datos en el esquema
+      correspondiente */
     public void fillMapUserList() {
-        for (Usuario us : usuarioFacade.findAll()) {
+        for (Usuario us : usuarioFacade.findAll(DEFAULT_USER)) {
             if (!us.getUsuario().equals(DEFAULT_USER)) {
                 SchemaTenantResolver.userDatasourceMap.put(us.getUsuario(), us.getEsquema());
             }
         }
     }
+       
+     /**
+     * Recibe como parametro un String con la ruta de un archivo 
+     * local (sql) para leer su contenido y devolver el contenido 
+     * del archivo.
+     * 
+     * @param ruta del archivo
+     * @return sentencia sql 
+     */
+    public String getSQL(String ruta) {                
+        
+        String sql = "";
+        try {
+            InputStream in = FacesContext
+                    .getCurrentInstance()
+                    .getExternalContext()
+                    .getResourceAsStream(ruta);
+            BufferedReader bf = new BufferedReader(new InputStreamReader(in));
+            String tmp = "";
+            while ((tmp = bf.readLine()) != null) {
+                sql += tmp + "\n";
+            }
+            bf.close();
+            in.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+        return sql;
+    }     
+    
+    
+    //devuelve el nombre del usuario logueado
+    public String getUserName(){
+        return usuario.getNombre();
+    }
+    
 
     public void printSession() {
         System.out.println("Usuarios registrados: \n");
-        for (Usuario u : usuarioFacade.findAll()) {
+        for (Usuario u : usuarioFacade.findAll(DEFAULT_USER)) {
             System.out.println(u.getUsuario());
         }
 
@@ -473,6 +730,14 @@ public class NavigationBean implements Serializable {
 
     public void setOpcion(String opcion) {
         this.opcion = opcion;
+    }
+
+    public HashMap getPerfilUsuario() {
+        return perfilUsuario;
+    }
+
+    public void setPerfilUsuario(HashMap perfilUsuario) {
+        this.perfilUsuario = perfilUsuario;
     }
 
     

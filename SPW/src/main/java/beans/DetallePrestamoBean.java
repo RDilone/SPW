@@ -8,11 +8,13 @@ package beans;
 import entities.Amortizacion;
 import entities.Archivo;
 import entities.CustomEmail;
+import entities.CustomReporte;
 import entities.HistorialPago;
 import entities.Intervalo;
 import entities.Persona;
 import entities.Prestamo;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
@@ -22,9 +24,14 @@ import java.util.List;
 import java.util.logging.SimpleFormatter;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.io.FileUtils;
+import org.apache.log4j.BasicConfigurator;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
@@ -130,10 +137,9 @@ public class DetallePrestamoBean implements Serializable {
     private double totalCuota;
     private double totalSaldo;
     private int cantCuotasPendientes;
-    private CustomEmail email;
     
-    //servicios
-    private EmailManager emailManager;
+    //constantes
+    private String DEFAULT_MAIL = "spwapplication@gmail.com";    
 
     //pagados
     private double totalPagoCapitalPagado;
@@ -594,28 +600,101 @@ public class DetallePrestamoBean implements Serializable {
         fillFormPrestamo();
     }
     
-    public void sendEmail(){
-        emailManager = new EmailManager();
-        email = new CustomEmail();
+    
+    //llena el objeto customReporte del reporte Historial Pago
+    public CustomReporte getCustomReporteHistorialPago(){
+        CustomReporte customReporte = new CustomReporte();
+        File reportes = new File(FacesContext.getCurrentInstance().getExternalContext().getRealPath("/resources/reportes/"));
         
-        email.setRemitente("spwapplication@gmail.com");
-        email.setDestinatario("jodilone@edenorte.com.do");
-        email.setAsunto("Amortizacion de Prestamo - Juan Batista");
-        email.setMensaje("Este correo contiene adjunto el reporte de la Amortizacion del prestamo");
+        customReporte.setReporte("Historial_Pago.jasper");
+        customReporte.getParametros().put("PATH", reportes.getAbsolutePath()+"/spw_logo2.png");
+        customReporte.getParametros().put("CEL", "SI");
+        customReporte.getParametros().put("ID_USUARIO", String.valueOf(NavigationBean.usuario.getIdUsuario()));
+        customReporte.getParametros().put("ID_PRESTAMO", String.valueOf(NavigationBean.prestamoDetalle.getIdPrestamo()));
+        customReporte.getParametros().put("ESQUEMA", NavigationBean.usuario.getEsquema());
+        
+        return customReporte;  
+    }
+    
+    
+    //llena el objeto customReporte del reporte Amortizacion Prestamo
+    public CustomReporte getCustomReportAmortizacion(){
+        CustomReporte customReporte = new CustomReporte();
+        File reportes = new File(
+                FacesContext
+                    .getCurrentInstance()
+                    .getExternalContext()
+                    .getRealPath("/resources/reportes/"));
+        
+        customReporte.setReporte("Amortizacion_Prestamo.jasper");
+        customReporte.getParametros().put("PATH", reportes.getAbsolutePath()+"/spw_logo2.png");
+        customReporte.getParametros().put("CEL", "SI");
+        customReporte.getParametros().put("ID_USUARIO", String.valueOf(NavigationBean.usuario.getIdUsuario()));
+        customReporte.getParametros().put("ID_PRESTAMO", String.valueOf(NavigationBean.prestamoDetalle.getIdPrestamo()));
+        customReporte.getParametros().put("ESQUEMA", NavigationBean.usuario.getEsquema());
+        
+        return customReporte;    
+    }
+    
+    //genera el reporte que se le pase como parametro
+    public void generateReport(CustomReporte customReporte){
+        navigationBean.printReport(customReporte);
+    }
+    
+    
+    //envia el correo con los datos del usuario
+    public void sendEmail(){
+        
+        EmailManager emailManager = new EmailManager();      
+        CustomEmail email = new CustomEmail();
+        CustomReporte customReporte = getCustomReportAmortizacion();
+        
+        byte[] tablaAmortizacion = null;
+        
+        try {
+            tablaAmortizacion = navigationBean.getByteReport(customReporte);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        email.setRemitente(DEFAULT_MAIL);
+        email.setDestinatario(NavigationBean.usuario.getCorreo());
+        email.setAsunto("Amortización de Préstamo - "+NavigationBean.prestamoDetalle.getIdPersona().getNombre());
+        email.setMensaje("Saludos Estimad@ \n \n"
+                       + "Por medio del presente, le remito la Tabla de Amortización referente \n"
+                       + "a su préstamo, el cual tiene un balance actual de RD$. "+ formatMoney(NavigationBean.prestamoDetalle.getBalanceCapital()) + " de un\n"
+                       + "monto total inicial de RD$. "+formatMoney(NavigationBean.prestamoDetalle.getCapitalPrestado())
+                       + ", en estado: "+ NavigationBean.prestamoDetalle.getEstado()+". \n \n"
+                       + "Adjunto: Reporte_Amortizacion.pdf"+" \n \n"
+                       + "Que tenga buen resto del dia!");
         email.setNombreArchivo("Reporte_Amortizacion.pdf");
-        email.setArchivo(listArchivo.get(0).getArchivo());
+        email.setArchivo(tablaAmortizacion);
         
         emailManager.SendEmail(email);
         
     }
 
+    //ejecuta las acciones seleccionadas en el dialog AmortizacionEdit
+    //acciones: enviar Correo e imprimir PDF
     public void executeActions() {
         //Acciones: enviar correo e imprimir PDF
         if(enviarCorreo){
             sendEmail();
         }
+        
+        if(imprimirPdf){
+            generateReport(getCustomReportAmortizacion());
+        }
     }
     
+    //genera el reporte de historial de pago
+    public void printReportHistorialPago(){
+        generateReport(getCustomReporteHistorialPago());
+    }
+    
+  
+    
+    //verifica si la ventana anterior es la ventana de refinanciamiento
     public void disableRefinanciamiento(){
         if(NavigationBean.PRE_VENTANA.endsWith("PRESTAMOS_SALDADOS")){
             checkRefinance = true;

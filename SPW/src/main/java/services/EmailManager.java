@@ -37,26 +37,28 @@ public class EmailManager {
     private Properties properties;
     private Session session;
     private MessagesBean messagesBean;
+    private String user;
     private String password;
     
     public EmailManager(){
-        password = "JODilone0769";
-        host = "smtp.gmail.com"; //al desplegar, iria la direccion del servidor en la que la app esta alojado
-        port = "465";
+        //contraseña de aplicacion: rgexbutbqxxpyuws
+        password = "rgexbutbqxxpyuws";
+        user = "spwapplication@gmail.com";
+        //host = "smtp.office365.com"; //al desplegar, iria la direccion del servidor en la que la app esta alojado
+        //port = "587";
         
         properties = System.getProperties();
-        //properties.put("mail.smtp.starttls.enable", "true");
         
         properties.put("mail.smtp.ssl.trust","smtp.gmail.com");
-        properties.put("mail.smtp.host", host);
-        properties.put("mail.smtp.port", port);
+        properties.put("mail.smtp.host", "smtp.gmail.com");
+        properties.put("mail.smtp.port", "465");
         properties.put("mail.smtp.ssl.enable", "true");
         properties.put("mail.smtp.auth", "true");
                 
         //creando session con las credenciales del correo oficial de la Aplicacion SPW: spwapplication@gmail.com
         session = Session.getInstance(properties, new Authenticator() {
              protected PasswordAuthentication getPasswordAuthentication(){
-                 return new PasswordAuthentication("spwapplication", password);
+                 return new PasswordAuthentication(user, password);
              };
         });
         

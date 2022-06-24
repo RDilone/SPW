@@ -50,8 +50,8 @@
                                style="margin-bottom: 20px;" 
                                update="@([id$=principal])"
                                actionListener="#{navigationBean.showWelcome()}" >
-                    <i class="pi pi-at"></i>
-                    <span>Nombre Usuario</span>
+                    <i class="pi pi-user"></i>
+                    <span>#{navigationBean.userName}</span>
                 </p:commandLink>
             </li>
 
@@ -67,7 +67,7 @@
                  actionListener="# {navigationBean.ejemploLlamarPagina}"
             -->
 
-            <li class="treeview">
+            <li class="treeview menu-open">
                 <a href="#" >           
                     <i class="pi pi-briefcase"></i>
                     <span>Mis Préstamos</span>
@@ -76,9 +76,10 @@
                         <i class="pi pi-angle-left"></i>
                     </span>
                 </a>
-                <ul class="treeview-menu">                   
-                    <li>
+                <ul class="treeview-menu" style="display: block;" >                   
+                    <li >
                         <p:commandLink update="@([id$=principal])" 
+                                       rendered="#{navigationBean.perfilUsuario.get('MIS_PRESTAMOS_PENDIENTES')}"
                                        actionListener="#{navigationBean.showMisPrestamos}">
                             <i class="pi pi-credit-card"></i>
                             <span>Pendientes</span>               
@@ -87,6 +88,7 @@
 
                     <li>
                         <p:commandLink  actionListener="#{navigationBean.showMisPrestamosSaldados()}" 
+                                        rendered="#{navigationBean.perfilUsuario.get('MIS_PRESTAMOS_SALDADOS')}"
                                         action="#{misPrestamosSaldados.fillListPrestamosSaldados()}" 
                                         update="@([id$=principal])">
                             <i class="pi pi-wallet"></i>
@@ -101,6 +103,7 @@
 
             <li>
                 <p:commandLink update="@([id$=principal])" 
+                               rendered="#{navigationBean.perfilUsuario.get('NUEVO_PRESTAMO')}"
                                actionListener="#{navigationBean.showNuevoPrestamo}">
                     <i class="pi pi-id-card"></i>   
                     <span>Nuevo Préstamo</span>               
@@ -109,7 +112,7 @@
 
 
 
-            <li class="treeview">
+            <li class="treeview menu-open">
                 <a href="#" >           
                     <i class="pi pi-box"></i>
                     <span>Ajustes</span>
@@ -118,9 +121,10 @@
                         <i class="pi pi-angle-left"></i>
                     </span>
                 </a>
-                <ul class="treeview-menu">                   
+                <ul class="treeview-menu" style="display: block;">                   
                     <li>
                         <p:commandLink update="@([id$=principal])"
+                                       rendered="#{navigationBean.perfilUsuario.get('PERSONAS')}"
                                        actionListener="#{navigationBean.showPersona}" >
                             <i class="pi pi-users"></i>
                             <span>Personas</span>
@@ -128,7 +132,8 @@
                     </li>
 
                     <li>
-                        <p:commandLink  actionListener="#{navigationBean.showIntervalo}" 
+                        <p:commandLink  actionListener="#{navigationBean.showIntervalo}"
+                                        rendered="#{navigationBean.perfilUsuario.get('INTERVALOS')}"
                                         action="#{intervaloBean.fillListIntervalo()}" 
                                         update="@([id$=principal])">
                             <i class="pi pi-calendar-times"></i>
@@ -138,6 +143,7 @@
 
                     <li>
                         <p:commandLink  actionListener="#{navigationBean.showPermisos()}" 
+                                        rendered="#{navigationBean.perfilUsuario.get('PERMISOS')}"
                                         update="@([id$=principal])">
                             <i class="pi pi-unlock"></i>
                             <span>Permisos</span>
@@ -145,15 +151,17 @@
                     </li>  
 
                     <li>
-                        <p:commandLink  actionListener="#{navigationBean.showUsuario()}"  
+                        <p:commandLink  actionListener="#{navigationBean.showUsuario()}" 
+                                        rendered="#{navigationBean.perfilUsuario.get('USUARIOS')}"
                                         update="@([id$=principal])">
-                            <i class="pi pi-user"></i>
+                            <i class="pi pi-user-edit"></i>
                             <span>Usuarios</span>
                         </p:commandLink>
                     </li>   
                     
                     <li>
                         <p:commandLink  actionListener="#{navigationBean.showAjustesReporte()}"  
+                                        rendered="#{navigationBean.perfilUsuario.get('REPORTES')}"
                                         update="@([id$=principal])">
                             <i class="pi pi-file-o"></i>
                             <span>Reportes</span>
@@ -162,6 +170,7 @@
 
                     <li>
                         <p:commandLink  actionListener="#{navigationBean.showContrasena()}"  
+                                        rendered="#{navigationBean.perfilUsuario.get('CAMBIAR_CONTRASENA')}"
                                         action="#{navigationBean.cleanFields()}"
                                         update="@([id$=principal])">
                             <i class="pi pi-key"></i>
@@ -174,6 +183,7 @@
 
             <li >
                 <p:commandLink actionListener="#{navigationBean.showReportes()}" 
+                               rendered="#{navigationBean.perfilUsuario.get('GALERIA_REPORTES')}"
                                update="@([id$=principal])" >            
                     <i class="pi pi-th-large"></i>
                     <span>Galería Reportes</span>

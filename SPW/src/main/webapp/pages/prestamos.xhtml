@@ -426,7 +426,8 @@
 
 
 
-    <components:dialogHistorialPago listHistorialPago="#{detallePrestamoBean.listHistorialPago}" />
+    <components:dialogHistorialPago listHistorialPago="#{detallePrestamoBean.listHistorialPago}"
+                                    printHistorialPago="#{detallePrestamoBean.printReportHistorialPago()}"/>
 
     <components:dialogAmortizacionEdit listAmortizacion="#{detallePrestamoBean.listAmortizacion}"
                                        executeActions="#{detallePrestamoBean.executeActions()}"

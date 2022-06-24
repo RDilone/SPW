@@ -48,7 +48,7 @@ public class IntervaloBean implements Serializable {
     }
 
     public void fillListIntervalo() {
-        listIntervalo = intervaloFacade.findAll();
+        listIntervalo = intervaloFacade.findAll(NavigationBean.DEFAULT_USER);
         cleanFields();
     }
 
