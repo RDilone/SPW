@@ -210,3 +210,13 @@ insert into sch_${user}.columna(tabla, columna, valor) values('persona','celular
 insert into sch_${user}.columna(tabla, columna, valor) values('persona','cedula',1);
 insert into sch_${user}.columna(tabla, columna, valor) values('persona','direccion',1);
 insert into sch_${user}.columna(tabla, columna, valor) values('persona','nombre',1);
+
+
+--agregando permisos de usuario por defecto
+
+insert into perfil(id_usuario, id_permiso) values ((select id_usuario from public.usuario where usuario = UPPER(${cs}${user}${cs})),5);
+insert into perfil(id_usuario, id_permiso) values ((select id_usuario from public.usuario where usuario = UPPER(${cs}${user}${cs})),14);
+insert into perfil(id_usuario, id_permiso) values ((select id_usuario from public.usuario where usuario = UPPER(${cs}${user}${cs})),15);
+insert into perfil(id_usuario, id_permiso) values ((select id_usuario from public.usuario where usuario = UPPER(${cs}${user}${cs})),23);
+insert into perfil(id_usuario, id_permiso) values ((select id_usuario from public.usuario where usuario = UPPER(${cs}${user}${cs})),24);
+insert into perfil(id_usuario, id_permiso) values ((select id_usuario from public.usuario where usuario = UPPER(${cs}${user}${cs})),13);

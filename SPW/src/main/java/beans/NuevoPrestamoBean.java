@@ -176,7 +176,7 @@ public class NuevoPrestamoBean implements Serializable {
     }
 
     public void fillListIntervalo() {
-        listIntervalo = intervaloFacade.findAll();
+        listIntervalo = intervaloFacade.findAll(NavigationBean.DEFAULT_USER);
     }
 
     public void fillListTipoInteres() {

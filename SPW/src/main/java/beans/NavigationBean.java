@@ -164,7 +164,7 @@ public class NavigationBean implements Serializable {
 
         messagesBean = new MessagesBean();
 
-        //loggedUser = "LUISG";
+        //loggedUser = "PRUEBAC";
         loggedUser = DEFAULT_USER;
         
         //usuario normal
@@ -190,6 +190,7 @@ public class NavigationBean implements Serializable {
         
         HashMap<String, String> userParam = new HashMap<>();
         userParam.put("user", user);
+        userParam.put("cs", "'"); //cs comilla simple
         
         StringSubstitutor sub = new StringSubstitutor(userParam);
         
